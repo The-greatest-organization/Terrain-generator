@@ -7,6 +7,7 @@ set(CMAKE_C_STANDARD 11)
 include_directories(${PROJECT_SOURCE_DIR}/deps/include)
 link_directories(${PROJECT_SOURCE_DIR}/deps/libs)
 
+<<<<<<< HEAD
 add_executable(release Main.cpp
         Application.h
         Application.cpp
@@ -14,7 +15,14 @@ add_executable(release Main.cpp
         Window.cpp
         Utils.h
         Event.h)
-target_link_libraries(release glfw3 GL)
+
+if (CMAKE_SYSTEM_NAME EQUAL "Windows")
+    target_link_libraries(release glfw3 opengl32 gdi32)
+endif ()
+
+if (CMAKE_SYSTEM_NAME EQUAL "Linux")
+    target_link_libraries(release glfw3 GL)
+endif ()
 
 
 set(IMGUI_INCLUDES
