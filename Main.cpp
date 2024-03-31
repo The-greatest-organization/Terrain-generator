@@ -1,6 +1,13 @@
-#include <iostream>
+#include "Application.h"
+#include <memory>
 
-int main(int, char**) {
-    std::cout << "Hello World" << '\n';
-    return 0;
+class TerrainGeneratorApp : public TerrainGenerator::Application {
+    virtual void onUpdate() override {
+
+    }
+};
+
+int main(void) {
+    auto terrainGeneratorApp = std::make_unique<TerrainGeneratorApp>();
+    terrainGeneratorApp->start(200, 200, "aa");
 }
