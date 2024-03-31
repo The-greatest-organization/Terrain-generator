@@ -4,15 +4,21 @@ project(TerrainGenerator)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_C_STANDARD 11)
 
+message("Build has been started!")
+message(${CMAKE_SYSTEM})
+
 include_directories(${PROJECT_SOURCE_DIR}/deps/include)
 link_directories(${PROJECT_SOURCE_DIR}/deps/libs)
 
-add_executable(release Main.cpp)
+set(ENGINE_INCLUDES Engine/Scene.h Engine/SceneManager.h)
+set(ENGINE_SOURCES Engine/Scene.cpp Engine/SceneManager.cpp Engine/Math.hpp Engine/Utils.hpp)
 
-if (CMAKE_SYSTEM_NAME EQUAL "Windows")
+add_executable(release Main.cpp ${ENGINE_INCLUDES} ${ENGINE_SOURCES})
+
+if (${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
     target_link_libraries(release glfw3 opengl32 gdi32)
-endif ()
-
-if (CMAKE_SYSTEM_NAME EQUAL "Linux")
+elseif (${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
     target_link_libraries(release glfw3 GL)
+else ()
+    message(FATAL_ERROR "FUCK YOU WITH SUCH SYSTEM!!!")
 endif ()
