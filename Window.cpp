@@ -5,6 +5,8 @@
 #include <imgui/imgui.h>
 #include <imgui/backends/imgui_impl_opengl3.h>
 #include <imgui/backends/imgui_impl_glfw.h>
+#include "stb_image.h"
+
 
 namespace TerrainGenerator {
     static std::minstd_rand generator;
@@ -12,14 +14,18 @@ namespace TerrainGenerator {
     static Int32 resolution = 0;
     static Int32 size = 0;
     static Int32 seed = generator();
-    static const char* biomes[] {"Plain", "Mountains", "Desert", "Sea"};
+    static const char *biomes[]{"Plain", "Mountains", "Desert", "Sea"};
     static const Int32 countBiomes = 4;
     static Int32 biome = 0;
-    static Float32 intensityTerrain = 0;
-    static Int32 stepsTerrain = 0;
-    static Float32 intensityHydraulic = 0;
-    static Int32 stepsHydraulic = 0;
-    static const char* seasons[] {"Summer", "Autumn", "Winter", "Spring"};
+    static Float32 intensityTerrain = 1.2;
+    static Float32 frequencyTerrain = 4;
+    static Float32 amplitudeTerrain = 1;
+    static Int32 stepsTerrain = 10;
+    static Float32 subIntensityHydraulic = 0.5;
+    static Float32 addIntensityHydraulic = 0.4;
+    static Int32 maxHeight = 4000;
+    static Int32 stepsHydraulic = 10;
+    static const char *seasons[]{"Summer", "Autumn", "Winter", "Spring"};
     static const Int32 countSeasons = 4;
     static Int32 season = 0;
     static bool cuda = false;
@@ -83,8 +89,45 @@ namespace TerrainGenerator {
         glfwTerminate();
     }
 
+    bool LoadTextureFromFile(const char *filename, GLuint *out_texture, int *out_width, int *out_height) {
+        int image_width = 0;
+        int image_height = 0;
+        unsigned char *image_data = stbi_load(filename, &image_width, &image_height, NULL, 4);
+        if (image_data == NULL)
+            return false;
+
+        GLuint image_texture;
+        glGenTextures(1, &image_texture);
+        glBindTexture(GL_TEXTURE_2D, image_texture);
+
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, image_width, image_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, image_data);
+        stbi_image_free(image_data);
+
+        *out_texture = image_texture;
+        *out_width = image_width;
+        *out_height = image_height;
+
+        return true;
+    }
+
     void showPreview(Float32 windowWidth, Float32 windowHeight) {
-        ImGui::BeginChild("Preview", {windowWidth / 4, windowHeight / 4 }, true);
+        ImGui::BeginChild("Preview", {windowWidth / 4, windowHeight / 4}, true);
+
+        Terrain tr = Terrain(size, resolution, seed, intensityTerrain, frequencyTerrain, amplitudeTerrain, stepsTerrain,
+                             stepsHydraulic, subIntensityHydraulic, addIntensityHydraulic, maxHeight, cuda);
+        tr.generate();
+        tr.export_png("preview.png");
+        int previewWidth = 0;
+        int previewHeight = 0;
+        GLuint previewTexture = 0;
+        bool ret = LoadTextureFromFile("preview.png", &previewTexture, &previewWidth, &previewHeight);
+        ImGui::Image((void*)(intptr_t)previewTexture, ImVec2(previewWidth, previewHeight));
+
         ImGui::Text("Preview");
         ImGui::EndChild();
     }
@@ -94,20 +137,23 @@ namespace TerrainGenerator {
 
         ImGui::SeparatorText("Main settings:");
         ImGui::InputInt("Seed", &seed);
-        ImGui::Combo("Biome", &biome, biomes, countBiomes);
-        ImGui::SliderInt("Resolution", &resolution,0,100);
-        ImGui::SliderInt("Size", &size,0,100);
-
+//        ImGui::Combo("Biome", &biome, biomes, countBiomes);
+        ImGui::SliderInt("Resolution", &resolution, 0, 100);
+        ImGui::SliderInt("Size", &size, 0, 100);
         ImGui::SeparatorText("Terrain formation:");
-        ImGui::SliderFloat("Intensity##1", &intensityTerrain,0,100);
-        ImGui::SliderInt("Steps##1", &stepsTerrain,0,100);
+        ImGui::SliderFloat("Intensity", &intensityTerrain, 0, 2);
+        ImGui::SliderFloat("Frequency", &frequencyTerrain, 0, 10);
+        ImGui::SliderFloat("Amplitude", &amplitudeTerrain, 0, 10);
+        ImGui::SliderInt("Max height", &maxHeight, 0, 5000);
+        ImGui::SliderInt("Steps##1", &stepsTerrain, 0, 100);
 
         ImGui::SeparatorText("Hydraulic erosion:");
-        ImGui::SliderFloat("Intensity##2", &intensityHydraulic,0,100);
-        ImGui::SliderInt("Steps##2", &stepsHydraulic,0,100);
+        ImGui::SliderFloat("Sub intensity", &subIntensityHydraulic, 0, 1);
+        ImGui::SliderFloat("Add intensity", &addIntensityHydraulic, 0, 1);
+        ImGui::SliderInt("Steps##2", &stepsHydraulic, 0, 100);
 
-        ImGui::SeparatorText("Coloring:");
-        ImGui::Combo("Season", &season, seasons, countSeasons);
+//        ImGui::SeparatorText("Coloring:");
+//        ImGui::Combo("Season", &season, seasons, countSeasons);
 
         ImGui::SeparatorText("Running:");
         ImGui::Checkbox("Cuda", &cuda);
@@ -127,7 +173,7 @@ namespace TerrainGenerator {
     void Window::onUpdate() {
         glClearColor(1, 0, 0, 0);
         glClear(GL_COLOR_BUFFER_BIT);
-        ImGuiIO& io = ImGui::GetIO();
+        ImGuiIO &io = ImGui::GetIO();
         io.DisplaySize.x = static_cast<float>(getWidth());
         io.DisplaySize.y = static_cast<float>(getHeight());
 
@@ -135,14 +181,14 @@ namespace TerrainGenerator {
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
 
-        ImGui::SetNextWindowPos({0.f,0.f});
+        ImGui::SetNextWindowPos({0.f, 0.f});
         Float32 windowWidth = static_cast<Float32>(getWidth());
         Float32 windowHeight = static_cast<Float32>(getHeight());
 
-        ImGui::SetNextWindowSize({windowWidth,windowHeight});
+        ImGui::SetNextWindowSize({windowWidth, windowHeight});
         windowWidth -= ImGui::GetCursorStartPos().x;
         windowHeight -= ImGui::GetCursorStartPos().y;
-        ImGui::Begin( "TerrainGenerator", nullptr, ImGuiWindowFlags_NoTitleBar);
+        ImGui::Begin("TerrainGenerator", nullptr, ImGuiWindowFlags_NoTitleBar);
 
         showPreview(windowWidth, windowHeight);
         showSettings(windowWidth, windowHeight);
