@@ -1,16 +1,17 @@
 #include "Window.h"
 
+#include <random>
 #include <GLFW/glfw3.h>
 #include <imgui/imgui.h>
 #include <imgui/backends/imgui_impl_opengl3.h>
 #include <imgui/backends/imgui_impl_glfw.h>
 
 namespace TerrainGenerator {
-
+    static std::minstd_rand generator;
     static bool GLFWInitialized = false;
     static Int32 resolution = 0;
     static Int32 size = 0;
-    static Int32 seed = 0;
+    static Int32 seed = generator();
     static const char* biomes[] {"Plain", "Mountains", "Desert", "Sea"};
     static const Int32 countBiomes = 4;
     static Int32 biome = 0;

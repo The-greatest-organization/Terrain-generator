@@ -1,5 +1,4 @@
 #include "Application.h"
-#include <memory>
 
 class TerrainGeneratorApp : public TerrainGenerator::Application {
     virtual void onUpdate() override {
