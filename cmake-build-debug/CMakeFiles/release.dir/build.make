@@ -124,6 +124,7 @@ release: CMakeFiles/release.dir/Main.o
 release: CMakeFiles/release.dir/Application.o
 release: CMakeFiles/release.dir/Window.o
 release: CMakeFiles/release.dir/build.make
+release: libImGui.a
 release: CMakeFiles/release.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/natalia/Terrain-generator/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Linking CXX executable release"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/release.dir/link.txt --verbose=$(VERBOSE)

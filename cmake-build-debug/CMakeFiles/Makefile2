@@ -64,6 +64,7 @@ CMAKE_BINARY_DIR = /home/natalia/Terrain-generator/cmake-build-debug
 
 # The main recursive "all" target.
 all: CMakeFiles/release.dir/all
+all: CMakeFiles/ImGui.dir/all
 .PHONY : all
 
 # The main recursive "preinstall" target.
@@ -72,21 +73,22 @@ preinstall:
 
 # The main recursive "clean" target.
 clean: CMakeFiles/release.dir/clean
+clean: CMakeFiles/ImGui.dir/clean
 .PHONY : clean
 
 #=============================================================================
 # Target rules for target CMakeFiles/release.dir
 
 # All Build rule for target.
-CMakeFiles/release.dir/all:
+CMakeFiles/release.dir/all: CMakeFiles/ImGui.dir/all
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/release.dir/build.make CMakeFiles/release.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/release.dir/build.make CMakeFiles/release.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/natalia/Terrain-generator/cmake-build-debug/CMakeFiles --progress-num=1,2,3,4 "Built target release"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/natalia/Terrain-generator/cmake-build-debug/CMakeFiles --progress-num=9,10,11,12 "Built target release"
 .PHONY : CMakeFiles/release.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/release.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/natalia/Terrain-generator/cmake-build-debug/CMakeFiles 4
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/natalia/Terrain-generator/cmake-build-debug/CMakeFiles 12
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/release.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/natalia/Terrain-generator/cmake-build-debug/CMakeFiles 0
 .PHONY : CMakeFiles/release.dir/rule
@@ -99,6 +101,32 @@ release: CMakeFiles/release.dir/rule
 CMakeFiles/release.dir/clean:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/release.dir/build.make CMakeFiles/release.dir/clean
 .PHONY : CMakeFiles/release.dir/clean
+
+#=============================================================================
+# Target rules for target CMakeFiles/ImGui.dir
+
+# All Build rule for target.
+CMakeFiles/ImGui.dir/all:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ImGui.dir/build.make CMakeFiles/ImGui.dir/depend
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ImGui.dir/build.make CMakeFiles/ImGui.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/natalia/Terrain-generator/cmake-build-debug/CMakeFiles --progress-num=1,2,3,4,5,6,7,8 "Built target ImGui"
+.PHONY : CMakeFiles/ImGui.dir/all
+
+# Build rule for subdir invocation for target.
+CMakeFiles/ImGui.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/natalia/Terrain-generator/cmake-build-debug/CMakeFiles 8
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/ImGui.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/natalia/Terrain-generator/cmake-build-debug/CMakeFiles 0
+.PHONY : CMakeFiles/ImGui.dir/rule
+
+# Convenience name for target.
+ImGui: CMakeFiles/ImGui.dir/rule
+.PHONY : ImGui
+
+# clean rule for target.
+CMakeFiles/ImGui.dir/clean:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ImGui.dir/build.make CMakeFiles/ImGui.dir/clean
+.PHONY : CMakeFiles/ImGui.dir/clean
 
 #=============================================================================
 # Special targets to cleanup operation of make.

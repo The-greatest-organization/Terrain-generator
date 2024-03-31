@@ -15,3 +15,31 @@ add_executable(release Main.cpp
         Utils.h
         Event.h)
 target_link_libraries(release glfw3 GL)
+
+
+set(IMGUI_INCLUDES
+		external/imgui/imgui.h
+		external/imgui/backends/imgui_impl_glfw.h
+		external/imgui/backends/imgui_impl_opengl3.h
+)
+
+set(IMGUI_SOURCES
+		external/imgui/imgui.cpp
+		external/imgui/backends/imgui_impl_glfw.cpp
+		external/imgui/backends/imgui_impl_opengl3.cpp
+		external/imgui/imgui_demo.cpp
+		external/imgui/imgui_tables.cpp
+		external/imgui/imgui_widgets.cpp
+		external/imgui/imgui_draw.cpp
+)
+
+add_library(ImGui STATIC
+		${IMGUI_INCLUDES}
+		${IMGUI_SOURCES}
+)
+
+target_include_directories(ImGui PUBLIC external)
+target_include_directories(ImGui PUBLIC external/imgui)
+target_link_libraries(ImGui PRIVATE glfw3)
+
+target_link_libraries(release PRIVATE ImGui)

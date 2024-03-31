@@ -584,35 +584,25 @@ CMakeFiles/release.dir/Window.o: ../Window.cpp \
   /usr/include/GL/gl.h \
   /usr/include/GL/glext.h \
   /usr/include/KHR/khrplatform.h \
-  /usr/include/c++/11/iostream \
-  /usr/include/c++/11/ostream \
-  /usr/include/c++/11/ios \
-  /usr/include/c++/11/exception \
-  /usr/include/c++/11/bits/exception_ptr.h \
-  /usr/include/c++/11/bits/cxxabi_init_exception.h \
-  /usr/include/c++/11/bits/nested_exception.h \
-  /usr/include/c++/11/bits/ios_base.h \
-  /usr/include/c++/11/bits/locale_classes.h \
-  /usr/include/c++/11/bits/locale_classes.tcc \
-  /usr/include/c++/11/system_error \
-  /usr/include/x86_64-linux-gnu/c++/11/bits/error_constants.h \
-  /usr/include/c++/11/stdexcept \
-  /usr/include/c++/11/streambuf \
-  /usr/include/c++/11/bits/streambuf.tcc \
-  /usr/include/c++/11/bits/basic_ios.h \
-  /usr/include/c++/11/bits/locale_facets.h \
-  /usr/include/c++/11/cwctype \
-  /usr/include/wctype.h \
-  /usr/include/x86_64-linux-gnu/bits/wctype-wchar.h \
-  /usr/include/x86_64-linux-gnu/c++/11/bits/ctype_base.h \
-  /usr/include/c++/11/bits/streambuf_iterator.h \
-  /usr/include/x86_64-linux-gnu/c++/11/bits/ctype_inline.h \
-  /usr/include/c++/11/bits/locale_facets.tcc \
-  /usr/include/c++/11/bits/basic_ios.tcc \
-  /usr/include/c++/11/bits/ostream.tcc \
-  /usr/include/c++/11/istream \
-  /usr/include/c++/11/bits/istream.tcc
+  ../external/imgui/imgui.h \
+  ../external/imgui/imconfig.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/float.h \
+  /usr/include/string.h \
+  /usr/include/strings.h \
+  /usr/include/assert.h \
+  ../external/imgui/backends/imgui_impl_opengl3.h \
+  ../external/imgui/backends/imgui_impl_glfw.h
 
+
+../external/imgui/backends/imgui_impl_glfw.h:
+
+../external/imgui/backends/imgui_impl_opengl3.h:
+
+/usr/include/string.h:
+
+/usr/lib/gcc/x86_64-linux-gnu/11/include/float.h:
+
+../external/imgui/imgui.h:
 
 /usr/include/KHR/khrplatform.h:
 
@@ -900,6 +890,8 @@ CMakeFiles/release.dir/Window.o: ../Window.cpp \
 
 ../Application.cpp:
 
+/usr/include/assert.h:
+
 /usr/include/c++/11/cstdlib:
 
 /usr/include/c++/11/bits/stl_iterator_base_types.h:
@@ -933,6 +925,8 @@ CMakeFiles/release.dir/Window.o: ../Window.cpp \
 /usr/include/c++/11/pstl/glue_memory_defs.h:
 
 /usr/include/c++/11/ext/type_traits.h:
+
+../external/imgui/imconfig.h:
 
 /usr/include/stdc-predef.h:
 
@@ -1015,6 +1009,8 @@ CMakeFiles/release.dir/Window.o: ../Window.cpp \
 /usr/include/c++/11/bits/allocated_ptr.h:
 
 /usr/include/c++/11/bits/refwrap.h:
+
+/usr/include/strings.h:
 
 /usr/lib/gcc/x86_64-linux-gnu/11/include/stddef.h:
 

@@ -18,7 +18,6 @@ namespace TerrainGenerator {
 
         eventDispatcher_.addEventListener<EventWindowResize>(
                 [](EventWindowResize &event) {
-                    std::cout << "resize\n";
                 });
 
         eventDispatcher_.addEventListener<EventWindowClose>(

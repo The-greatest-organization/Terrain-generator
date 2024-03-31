@@ -216,6 +216,9 @@ CMAKE_VERBOSE_MAKEFILE:BOOL=FALSE
 //Single output directory for building all executables.
 EXECUTABLE_OUTPUT_PATH:PATH=
 
+//Dependencies for the target
+ImGui_LIB_DEPENDS:STATIC=general;glfw3;
+
 //Single output directory for building all libraries.
 LIBRARY_OUTPUT_PATH:PATH=
 

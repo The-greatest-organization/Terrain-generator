@@ -1,0 +1,2 @@
+/usr/bin/ar qc libImGui.a CMakeFiles/ImGui.dir/external/imgui/imgui.o CMakeFiles/ImGui.dir/external/imgui/backends/imgui_impl_glfw.o CMakeFiles/ImGui.dir/external/imgui/backends/imgui_impl_opengl3.o CMakeFiles/ImGui.dir/external/imgui/imgui_demo.o CMakeFiles/ImGui.dir/external/imgui/imgui_tables.o CMakeFiles/ImGui.dir/external/imgui/imgui_widgets.o CMakeFiles/ImGui.dir/external/imgui/imgui_draw.o
+/usr/bin/ranlib libImGui.a

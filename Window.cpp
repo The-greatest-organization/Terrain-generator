@@ -1,8 +1,9 @@
 #include "Window.h"
 
 #include <GLFW/glfw3.h>
-#include <iostream>
-#include "Utils.h"
+#include <imgui/imgui.h>
+#include <imgui/backends/imgui_impl_opengl3.h>
+#include <imgui/backends/imgui_impl_glfw.h>
 
 namespace TerrainGenerator {
 
@@ -11,6 +12,11 @@ namespace TerrainGenerator {
     Window::Window(std::string title, const Uint32 width, const Uint32 height) : data_(
             {std::move(title), width, height}) {
         init();
+
+        IMGUI_CHECKVERSION();
+        ImGui::CreateContext();
+        ImGui_ImplOpenGL3_Init();
+        ImGui_ImplGlfw_InitForOpenGL(window_, true);
     }
 
     Window::~Window() {
@@ -31,7 +37,7 @@ namespace TerrainGenerator {
         glfwWindowHint(GLFW_GREEN_BITS, mode->greenBits);
         glfwWindowHint(GLFW_BLUE_BITS, mode->blueBits);
         glfwWindowHint(GLFW_REFRESH_RATE, mode->refreshRate);
-        std::cout << data_.width << "\n";
+
         //window_ = glfwCreateWindow(mode->width, mode->height, data_.title_.c_str(), monitor, NULL);
         window_ = glfwCreateWindow(data_.width, data_.height, data_.title.c_str(), NULL, NULL);
 
@@ -81,6 +87,18 @@ namespace TerrainGenerator {
     void Window::onUpdate() {
         glClearColor(1, 0, 0, 0);
         glClear(GL_COLOR_BUFFER_BIT);
+        ImGuiIO& io = ImGui::GetIO();
+        io.DisplaySize.x = static_cast<float>(getWidth());
+        io.DisplaySize.y = static_cast<float>(getHeight());
+
+        ImGui_ImplOpenGL3_NewFrame();
+        ImGui_ImplGlfw_NewFrame();
+        ImGui::NewFrame();
+        ImGui::ShowDemoWindow();
+
+        ImGui::Render();
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
         glfwSwapBuffers(window_);
         glfwPollEvents();
     }

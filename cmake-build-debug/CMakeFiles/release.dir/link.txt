@@ -1,1 +1,1 @@
-/usr/bin/c++ -rdynamic CMakeFiles/release.dir/Main.o CMakeFiles/release.dir/Application.o CMakeFiles/release.dir/Window.o -o release   -L/home/natalia/Terrain-generator/deps/libs  -Wl,-rpath,/home/natalia/Terrain-generator/deps/libs -lglfw3 -lGL 
+/usr/bin/c++ -rdynamic CMakeFiles/release.dir/Main.o CMakeFiles/release.dir/Application.o CMakeFiles/release.dir/Window.o -o release   -L/home/natalia/Terrain-generator/deps/libs  -L/home/natalia/Terrain-generator/cmake-build-debug  -Wl,-rpath,/home/natalia/Terrain-generator/deps/libs -lglfw3 -lGL libImGui.a -lglfw3 

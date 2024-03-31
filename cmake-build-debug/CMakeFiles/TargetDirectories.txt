@@ -1,3 +1,4 @@
 /home/natalia/Terrain-generator/cmake-build-debug/CMakeFiles/release.dir
+/home/natalia/Terrain-generator/cmake-build-debug/CMakeFiles/ImGui.dir
 /home/natalia/Terrain-generator/cmake-build-debug/CMakeFiles/edit_cache.dir
 /home/natalia/Terrain-generator/cmake-build-debug/CMakeFiles/rebuild_cache.dir
