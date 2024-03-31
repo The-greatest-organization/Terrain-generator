@@ -15,7 +15,7 @@ namespace TerrainGenerator {
         using EventCallbackFn =
                 std::function<void(BaseEvent &)>;
 
-        Window(std::string title, const Uint32 width, const Uint32 height);
+        Window(std::string title, const Int32 width, const Int32 height);
 
         ~Window();
 
@@ -40,8 +40,8 @@ namespace TerrainGenerator {
     private:
         struct WindowData {
             std::string title;
-            Uint32 width;
-            Uint32 height;
+            Int32 width;
+            Int32 height;
             EventCallbackFn eventCallbackFn;
         };
         GLFWwindow *window_ = nullptr;
