@@ -18,12 +18,16 @@ namespace TerrainGenerator {
     static Int32 stepsTerrain = 0;
     static Float32 intensityHydraulic = 0;
     static Int32 stepsHydraulic = 0;
+    static const char* seasons[] {"Summer", "Autumn", "Winter", "Spring"};
+    static const Int32 countSeasons = 4;
+    static Int32 season = 0;
+    static bool cuda = false;
+    static bool run = false;
 
 
     Window::Window(std::string title, const Int32 width, const Int32 height) : data_(
             {std::move(title), width, height}) {
         init();
-
         IMGUI_CHECKVERSION();
         ImGui::CreateContext();
         ImGui_ImplOpenGL3_Init();
@@ -38,7 +42,6 @@ namespace TerrainGenerator {
         if (!GLFWInitialized) {
             if (!glfwInit())
                 return -1;
-
             GLFWInitialized = true;
         }
         GLFWmonitor *monitor = glfwGetPrimaryMonitor();
@@ -50,8 +53,6 @@ namespace TerrainGenerator {
         glfwWindowHint(GLFW_REFRESH_RATE, mode->refreshRate);
         data_.width = mode->width;
         data_.height = mode->height;
-        //glfwGetMonitorPhysicalSize(monitor, &data_.width, &data_.height);
-        //window_ = glfwCreateWindow(mode->width, mode->height, data_.title.c_str(), monitor, NULL);
         window_ = glfwCreateWindow(data_.width, data_.height, data_.title.c_str(), NULL, NULL);
 
         if (!window_) {
@@ -62,25 +63,6 @@ namespace TerrainGenerator {
 
         glfwSetWindowUserPointer(window_, &data_);
 
-        glfwSetWindowSizeCallback(
-                window_,
-                [](GLFWwindow *window, Int32 width, Int32 height) {
-                    WindowData &data = *static_cast<WindowData *>(glfwGetWindowUserPointer(window));
-                    data.width = width;
-                    data.height = height;
-                    EventWindowResize event(width, height);
-                    data.eventCallbackFn(event);
-                }
-        );
-
-        glfwSetCursorPosCallback(
-                window_,
-                [](GLFWwindow *window, Float64 x, Float64 y) {
-                    WindowData &data = *static_cast<WindowData *>(glfwGetWindowUserPointer(window));
-                    EventMouseMoved event(x, y);
-                    data.eventCallbackFn(event);
-                }
-        );
         glfwSetWindowCloseCallback(
                 window_,
                 [](GLFWwindow *window) {
@@ -100,6 +82,47 @@ namespace TerrainGenerator {
         glfwTerminate();
     }
 
+    void showPreview(Float32 windowWidth, Float32 windowHeight) {
+        ImGui::BeginChild("Preview", {windowWidth / 4, windowHeight / 4 }, true);
+        ImGui::Text("Preview");
+        ImGui::EndChild();
+    }
+
+    void showSettings(Float32 windowWidth, Float32 windowHeight) {
+        ImGui::BeginChild("Settings", {windowWidth / 4, 3 * windowHeight / 4}, true);
+
+        ImGui::SeparatorText("Main settings:");
+        ImGui::InputInt("Seed", &seed);
+        ImGui::Combo("Biome", &biome, biomes, countBiomes);
+        ImGui::SliderInt("Resolution", &resolution,0,100);
+        ImGui::SliderInt("Size", &size,0,100);
+
+        ImGui::SeparatorText("Terrain formation:");
+        ImGui::SliderFloat("Intensity##1", &intensityTerrain,0,100);
+        ImGui::SliderInt("Steps##1", &stepsTerrain,0,100);
+
+        ImGui::SeparatorText("Hydraulic erosion:");
+        ImGui::SliderFloat("Intensity##2", &intensityHydraulic,0,100);
+        ImGui::SliderInt("Steps##2", &stepsHydraulic,0,100);
+
+        ImGui::SeparatorText("Coloring:");
+        ImGui::Combo("Season", &season, seasons, countSeasons);
+
+        ImGui::SeparatorText("Running:");
+        ImGui::Checkbox("Cuda", &cuda);
+        if (ImGui::Button("Run", {100.f, 50.f})) {
+            run = true;
+        }
+        ImGui::EndChild();
+    }
+
+    void showTerrain(Float32 windowWidth, Float32 windowHeight) {
+        ImGui::SetCursorPos({2 * ImGui::GetCursorStartPos().x + windowWidth / 4, ImGui::GetCursorStartPos().y});
+        ImGui::BeginChild("Terrain", {3 * windowWidth / 4, 4 * windowHeight / 4 + 3}, true);
+        ImGui::Text("Terrain");
+        ImGui::EndChild();
+    }
+
     void Window::onUpdate() {
         glClearColor(1, 0, 0, 0);
         glClear(GL_COLOR_BUFFER_BIT);
@@ -110,37 +133,19 @@ namespace TerrainGenerator {
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
-//        ImGui::ShowDemoWindow();
 
         ImGui::SetNextWindowPos({0.f,0.f});
         Float32 windowWidth = static_cast<Float32>(getWidth());
         Float32 windowHeight = static_cast<Float32>(getHeight());
 
         ImGui::SetNextWindowSize({windowWidth,windowHeight});
-
+        windowWidth -= ImGui::GetCursorStartPos().x;
+        windowHeight -= ImGui::GetCursorStartPos().y;
         ImGui::Begin( "TerrainGenerator", nullptr, ImGuiWindowFlags_NoTitleBar);
 
-        ImGui::BeginChild("Preview", {windowWidth / 4, windowHeight / 4}, true);
-
-        ImGui::Text("Preview");
-
-        ImGui::EndChild();
-
-
-        ImGui::BeginChild("Settings", {windowWidth / 4, 3 * windowHeight / 4}, true);
-
-        ImGui::SeparatorText("Main settings:");
-        ImGui::InputInt("Seed", &seed);
-        ImGui::Combo("Biome", &biome, biomes, countBiomes);
-        ImGui::SliderInt("Resolution", &resolution,0,100);
-        ImGui::SliderInt("Size", &size,0,100);
-        ImGui::SeparatorText("Terrain formation:");
-
-        ImGui::SeparatorText("Hydraulic erosion:");
-
-        ImGui::SeparatorText("Coloring:");
-
-        ImGui::EndChild();
+        showPreview(windowWidth, windowHeight);
+        showSettings(windowWidth, windowHeight);
+        showTerrain(windowWidth, windowHeight);
 
         ImGui::End();
 

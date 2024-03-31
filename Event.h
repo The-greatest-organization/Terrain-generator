@@ -6,15 +6,10 @@
 
 namespace TerrainGenerator {
     enum class EventType {
-        WindowResize = 0,
-        WindowClose,
-
-        KeyPressed,
-        KeyReleased,
+        WindowClose = 0,
 
         MouseButtonPressed,
         MouseButtonReleased,
-        MouseMoved,
 
         EventsCount
     };
@@ -44,26 +39,6 @@ namespace TerrainGenerator {
                 callback(event);
             }
         }
-    };
-
-    struct EventMouseMoved : public BaseEvent {
-        static const EventType type = EventType::MouseMoved;
-        double x;
-        double y;
-
-        EventMouseMoved(const double x, const double y) : x(x), y(y) {}
-
-        virtual EventType getType() const override { return type; }
-    };
-
-    struct EventWindowResize : public BaseEvent {
-        static const EventType type = EventType::WindowResize;
-        Uint32 width;
-        Uint32 height;
-
-        EventWindowResize(const Uint32 width, const Uint32 height) : width(width), height(height) {}
-
-        virtual EventType getType() const override { return type; }
     };
 
     struct EventWindowClose : public BaseEvent {

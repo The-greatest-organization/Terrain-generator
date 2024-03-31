@@ -1,7 +1,6 @@
 #include "Application.h"
 #include "Window.h"
 #include "Event.h"
-#include <iostream>
 
 namespace TerrainGenerator {
     Application::Application() {}
@@ -10,15 +9,6 @@ namespace TerrainGenerator {
 
     int Application::start(Uint32 windowWidth, Uint32 windowHeight, const char *title) {
         window_ = std::make_unique<Window>(title, windowWidth, windowHeight);
-
-        eventDispatcher_.addEventListener<EventMouseMoved>(
-                [](EventMouseMoved &event) {
-
-                });
-
-        eventDispatcher_.addEventListener<EventWindowResize>(
-                [](EventWindowResize &event) {
-                });
 
         eventDispatcher_.addEventListener<EventWindowClose>(
                 [&](EventWindowClose &event) {
