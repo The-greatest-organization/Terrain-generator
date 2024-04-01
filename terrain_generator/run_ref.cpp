@@ -7,6 +7,6 @@ int main() {
                20,0.6,0.5,1, 0.5};
 //    tr.load_png("sourse.png");
     tr.generate();
-//    tr.export_png();
+    tr.export_png();
     return 0;
 }

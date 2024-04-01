@@ -149,7 +149,7 @@ class Terrain {
     type **new_map(uint map_size) {
         auto map = new type *[map_size];
         for (uint i = 0; i < map_size; i++) {
-            map[i] = new type[map_size];
+            map[i] = new type[map_size]{0};
         }
         return (map);
     }
