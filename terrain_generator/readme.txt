@@ -3,8 +3,8 @@ you should include generator.h file, it contains Terrain class
     auto tr = Terrain(uint size, uint resolution, uint seed,
             double perlin_intensity = 1.2, double perlin_frequency = 4, double perlin_amplitude = 1,
             uint perlin_iterations = 10,
-            uint hydraulic_erosion_iterations = 10, double hydraulic_erosion_sub_intensity = 0.5,
-            double hydraulic_erosion_add_intensity = 0.4, uint max_height = MAX_HEIGHT,
+            uint hydraulic_erosion_iterations = 10, double smoothing_hydraulic_erosion_sub_intensity = 0.5,
+            double smoothing_hydraulic_erosion_add_intensity = 0.4, uint max_height = MAX_HEIGHT,
             bool cuda = false);
 
     to generate new terrain use tr.generate();
