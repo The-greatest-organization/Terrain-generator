@@ -1,6 +1,7 @@
 #include "Application.h"
 #include "Window.h"
 #include "Event.h"
+#include <glad/glad.h>
 
 namespace TerrainGenerator {
     Application::Application() {}

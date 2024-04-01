@@ -1,12 +1,13 @@
 #include "Window.h"
 
 #include <random>
+#include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <imgui/imgui.h>
 #include <imgui/backends/imgui_impl_opengl3.h>
 #include <imgui/backends/imgui_impl_glfw.h>
-#include "stb_image.h"
-
+#include "terrain_generator/stb_image.h"
+#include "terrain_generator/generator.h"
 
 namespace TerrainGenerator {
     static std::minstd_rand generator;
@@ -17,14 +18,19 @@ namespace TerrainGenerator {
     static const char *biomes[]{"Plain", "Mountains", "Desert", "Sea"};
     static const Int32 countBiomes = 4;
     static Int32 biome = 0;
+    static Int32 maxHeight = 5000;
     static Float32 intensityTerrain = 1.2;
     static Float32 frequencyTerrain = 4;
     static Float32 amplitudeTerrain = 1;
     static Int32 stepsTerrain = 10;
     static Float32 subIntensityHydraulic = 0.5;
     static Float32 addIntensityHydraulic = 0.4;
-    static Int32 maxHeight = 4000;
     static Int32 stepsHydraulic = 10;
+    static Int32 stepsRealHydraulic = 0;
+    static Float32 intensityRealHydraulic = 1;
+    static Float32 fluidityRealHydraulic = 0.8;
+    static Float32 flowabilityRealHydraulic = 2;
+    static Float32 evaporationRealHydraulic = 0.5;
     static const char *seasons[]{"Summer", "Autumn", "Winter", "Spring"};
     static const Int32 countSeasons = 4;
     static Int32 season = 0;
@@ -67,6 +73,10 @@ namespace TerrainGenerator {
             return -1;
         }
         glfwMakeContextCurrent(window_);
+
+        if (!gladLoadGLLoader((GLADloadproc) glfwGetProcAddress)) {
+            return -1;
+        }
 
         glfwSetWindowUserPointer(window_, &data_);
 
@@ -118,15 +128,22 @@ namespace TerrainGenerator {
     void showPreview(Float32 windowWidth, Float32 windowHeight) {
         ImGui::BeginChild("Preview", {windowWidth / 4, windowHeight / 4}, true);
 
-        Terrain tr = Terrain(size, resolution, seed, intensityTerrain, frequencyTerrain, amplitudeTerrain, stepsTerrain,
-                             stepsHydraulic, subIntensityHydraulic, addIntensityHydraulic, maxHeight, cuda);
+        Terrain tr = Terrain(size, maxHeight, seed, resolution, intensityTerrain, frequencyTerrain, amplitudeTerrain,
+                             stepsTerrain,
+                             stepsHydraulic, subIntensityHydraulic, addIntensityHydraulic, stepsRealHydraulic,
+                             intensityRealHydraulic, fluidityRealHydraulic, flowabilityRealHydraulic,
+                             evaporationRealHydraulic, cuda);
         tr.generate();
         tr.export_png("preview.png");
         int previewWidth = 0;
         int previewHeight = 0;
         GLuint previewTexture = 0;
         bool ret = LoadTextureFromFile("preview.png", &previewTexture, &previewWidth, &previewHeight);
-        ImGui::Image((void*)(intptr_t)previewTexture, ImVec2(previewWidth, previewHeight));
+
+        if (!ret) {
+            ImGui::Text("no image");
+        }
+        ImGui::Image((void *) (intptr_t) previewTexture, ImVec2(previewWidth, previewHeight));
 
         ImGui::Text("Preview");
         ImGui::EndChild();
@@ -137,7 +154,6 @@ namespace TerrainGenerator {
 
         ImGui::SeparatorText("Main settings:");
         ImGui::InputInt("Seed", &seed);
-//        ImGui::Combo("Biome", &biome, biomes, countBiomes);
         ImGui::SliderInt("Resolution", &resolution, 0, 100);
         ImGui::SliderInt("Size", &size, 0, 100);
         ImGui::SeparatorText("Terrain formation:");
@@ -147,13 +163,17 @@ namespace TerrainGenerator {
         ImGui::SliderInt("Max height", &maxHeight, 0, 5000);
         ImGui::SliderInt("Steps##1", &stepsTerrain, 0, 100);
 
-        ImGui::SeparatorText("Hydraulic erosion:");
+        ImGui::SeparatorText("Smoothing hydraulic erosion:");
         ImGui::SliderFloat("Sub intensity", &subIntensityHydraulic, 0, 1);
         ImGui::SliderFloat("Add intensity", &addIntensityHydraulic, 0, 1);
         ImGui::SliderInt("Steps##2", &stepsHydraulic, 0, 100);
 
-//        ImGui::SeparatorText("Coloring:");
-//        ImGui::Combo("Season", &season, seasons, countSeasons);
+        ImGui::SeparatorText("Real hydraulic erosion:");
+        ImGui::SliderFloat("Intensity##2", &intensityRealHydraulic, 0, 1);
+        ImGui::SliderFloat("Fluidity of water", &fluidityRealHydraulic, 0, 1);
+        ImGui::SliderFloat("Soil flowability", &flowabilityRealHydraulic, 0, 10);
+        ImGui::SliderFloat("Evaporation of water", &evaporationRealHydraulic, 0, 1);
+        ImGui::SliderInt("Steps##3", &stepsRealHydraulic, 0, 100);
 
         ImGui::SeparatorText("Running:");
         ImGui::Checkbox("Cuda", &cuda);

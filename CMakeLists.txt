@@ -7,7 +7,6 @@ set(CMAKE_C_STANDARD 11)
 include_directories(${PROJECT_SOURCE_DIR}/deps/include)
 link_directories(${PROJECT_SOURCE_DIR}/deps/libs)
 
-<<<<<<< HEAD
 add_executable(release Main.cpp
         Application.h
         Application.cpp
@@ -24,6 +23,8 @@ if (CMAKE_SYSTEM_NAME EQUAL "Linux")
     target_link_libraries(release glfw3 GL)
 endif ()
 
+add_subdirectory(external/glad ${CMAKE_CURRENT_BINARY_DIR}/glad)
+target_link_libraries(release PRIVATE glad)
 
 set(IMGUI_INCLUDES
 		external/imgui/imgui.h
