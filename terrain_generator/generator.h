@@ -1,6 +1,7 @@
 #ifndef generator_h
 #define generator_h
 
+#include "algorithm"
 #include "random"
 #include "iostream"
 #include "cmath"
@@ -17,20 +18,22 @@
 
 template<typename type>
 class SimpleRandom {
-    std::mt19937 gen;
     std::uniform_int_distribution<type> range;
     std::uniform_int_distribution<type> range_interval;
 
 public:
-    SimpleRandom(uint seed, type min, type max, type interval) {
-        range = std::uniform_int_distribution<type>(min + interval, max);
-        range_interval = std::uniform_int_distribution<type>(0, interval);
+    std::mt19937 gen;
+
+    SimpleRandom(uint seed, type min, type max) {
+        range = std::uniform_int_distribution<type>(min, max);
+        range_interval = std::uniform_int_distribution<type>(0);
         gen = std::mt19937(seed);
     }
 
     type next() {
         return range(gen) - range_interval(gen);
     }
+
 };
 
 
@@ -145,10 +148,18 @@ class Terrain {
     template<typename type>
     type **new_map(uint map_size) {
         auto map = new type *[map_size];
-        for (long i = 0; i <= map_size; i++) {
+        for (uint i = 0; i < map_size; i++) {
             map[i] = new type[map_size];
         }
         return (map);
+    }
+
+    template<typename type>
+    void delete_map(type **map, uint map_size) {
+        for (uint i = 0; i < map_size; i++) {
+            delete[] map[i];
+        }
+        delete[] map;
     }
 
     template<typename type>
@@ -236,13 +247,14 @@ class Terrain {
         double n = real_hydraulic_erosion_soil_flowability;
         double k = pow(resolution, n) * pow(3.1415 / 2, n);
 
-        SimpleRandom<uint> rnd{seed, 0, 50000, 0};
+        SimpleRandom<uint> rnd{seed, 0, 50000};
         uint water_seed = rnd.next();
         auto water = new_map<double>(hmap_size);
         for (uint step = 0; step < real_hydraulic_erosion_steps; step++) {
-            noise_hmap<double>(water, real_hydraulic_erosion_intensity * resolution, 15, 1, 1, 1, water_seed);
-            for (uint i = 0; i < hmap_size; i++) {//todo i dont like how points are selected
+            noise_hmap<double>(water, real_hydraulic_erosion_intensity, 15, 1, 1, 1, water_seed);
+            for (uint i = 0; i < hmap_size; i++) {
                 for (uint j = 0; j < hmap_size; j++) {
+                    std::shuffle(directions[0], directions[7], rnd.gen);//TODO i think it takes too long
                     for (char d = 0; d < 8; d++) {
                         uint x = i + directions[d][0];
                         uint y = j + directions[d][1];
@@ -260,10 +272,10 @@ class Terrain {
 
 
                         diff = hmap[i][j] - hmap[x][y];
-                        double all_water = water[x][y]+water[i][j];
+                        double all_water = water[x][y] + water[i][j];
                         if (all_water > diff) {
                             water[i][j] = (all_water - diff) / 2;
-                            water[x][y] = diff + (all_water-diff)/2;
+                            water[x][y] = diff + (all_water - diff) / 2;
                         } else {
                             water[x][y] = all_water;
                             water[i][j] = 0;
@@ -276,6 +288,7 @@ class Terrain {
                 }
             }
         }
+        delete_map(water, hmap_size);
     }
 
     void coloring() {
@@ -310,7 +323,7 @@ public:
         this->smoothing_hydraulic_erosion_add_intensity = smoothing_hydraulic_erosion_add_intensity;
 
         this->real_hydraulic_erosion_steps = real_hydraulic_erosion_steps * resolution;
-        this->real_hydraulic_erosion_intensity = real_hydraulic_erosion_intensity;
+        this->real_hydraulic_erosion_intensity = real_hydraulic_erosion_intensity * resolution;
         this->real_hydraulic_erosion_fluidity_of_water = real_hydraulic_erosion_fluidity_of_water;
         this->real_hydraulic_erosion_soil_flowability = real_hydraulic_erosion_soil_flowability;
         this->real_hydraulic_erosion_non_evaporation_of_water = real_hydraulic_erosion_non_evaporation_of_water;
@@ -324,6 +337,10 @@ public:
 
     }
 
+    ~Terrain() {
+        delete_map(hmap, hmap_size);
+    }
+
     void generate() {
         if (hmap == nullptr) {
             hmap = new_map<uint>(hmap_size);
@@ -332,8 +349,8 @@ public:
                          perlin_amplitude,
                          seed);
         asteroids();
-        smoothing_hydraulic_erosion();
         real_hydraulic_erosion();
+        smoothing_hydraulic_erosion();
         coloring();
     }
 
