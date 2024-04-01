@@ -142,6 +142,19 @@ ImGui/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/ImGui.dir/build.make CMakeFiles/ImGui.dir/build
 .PHONY : ImGui/fast
 
+#=============================================================================
+# Target rules for targets named glad
+
+# Build rule for target.
+glad: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 glad
+.PHONY : glad
+
+# fast build rule for target.
+glad/fast:
+	$(MAKE) $(MAKESILENT) -f glad/CMakeFiles/glad.dir/build.make glad/CMakeFiles/glad.dir/build
+.PHONY : glad/fast
+
 # target to build an object file
 Application.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/release.dir/build.make CMakeFiles/release.dir/Application.o
@@ -301,6 +314,7 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... ImGui"
+	@echo "... glad"
 	@echo "... release"
 	@echo "... Application.o"
 	@echo "... Application.i"

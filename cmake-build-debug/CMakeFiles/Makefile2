@@ -65,30 +65,48 @@ CMAKE_BINARY_DIR = /home/natalia/Terrain-generator/cmake-build-debug
 # The main recursive "all" target.
 all: CMakeFiles/release.dir/all
 all: CMakeFiles/ImGui.dir/all
+all: glad/all
 .PHONY : all
 
 # The main recursive "preinstall" target.
-preinstall:
+preinstall: glad/preinstall
 .PHONY : preinstall
 
 # The main recursive "clean" target.
 clean: CMakeFiles/release.dir/clean
 clean: CMakeFiles/ImGui.dir/clean
+clean: glad/clean
 .PHONY : clean
+
+#=============================================================================
+# Directory level rules for directory glad
+
+# Recursive "all" directory target.
+glad/all: glad/CMakeFiles/glad.dir/all
+.PHONY : glad/all
+
+# Recursive "preinstall" directory target.
+glad/preinstall:
+.PHONY : glad/preinstall
+
+# Recursive "clean" directory target.
+glad/clean: glad/CMakeFiles/glad.dir/clean
+.PHONY : glad/clean
 
 #=============================================================================
 # Target rules for target CMakeFiles/release.dir
 
 # All Build rule for target.
 CMakeFiles/release.dir/all: CMakeFiles/ImGui.dir/all
+CMakeFiles/release.dir/all: glad/CMakeFiles/glad.dir/all
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/release.dir/build.make CMakeFiles/release.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/release.dir/build.make CMakeFiles/release.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/natalia/Terrain-generator/cmake-build-debug/CMakeFiles --progress-num=9,10,11,12 "Built target release"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/natalia/Terrain-generator/cmake-build-debug/CMakeFiles --progress-num=11,12,13,14 "Built target release"
 .PHONY : CMakeFiles/release.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/release.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/natalia/Terrain-generator/cmake-build-debug/CMakeFiles 12
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/natalia/Terrain-generator/cmake-build-debug/CMakeFiles 14
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/release.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/natalia/Terrain-generator/cmake-build-debug/CMakeFiles 0
 .PHONY : CMakeFiles/release.dir/rule
@@ -127,6 +145,32 @@ ImGui: CMakeFiles/ImGui.dir/rule
 CMakeFiles/ImGui.dir/clean:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/ImGui.dir/build.make CMakeFiles/ImGui.dir/clean
 .PHONY : CMakeFiles/ImGui.dir/clean
+
+#=============================================================================
+# Target rules for target glad/CMakeFiles/glad.dir
+
+# All Build rule for target.
+glad/CMakeFiles/glad.dir/all:
+	$(MAKE) $(MAKESILENT) -f glad/CMakeFiles/glad.dir/build.make glad/CMakeFiles/glad.dir/depend
+	$(MAKE) $(MAKESILENT) -f glad/CMakeFiles/glad.dir/build.make glad/CMakeFiles/glad.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/natalia/Terrain-generator/cmake-build-debug/CMakeFiles --progress-num=9,10 "Built target glad"
+.PHONY : glad/CMakeFiles/glad.dir/all
+
+# Build rule for subdir invocation for target.
+glad/CMakeFiles/glad.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/natalia/Terrain-generator/cmake-build-debug/CMakeFiles 2
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 glad/CMakeFiles/glad.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/natalia/Terrain-generator/cmake-build-debug/CMakeFiles 0
+.PHONY : glad/CMakeFiles/glad.dir/rule
+
+# Convenience name for target.
+glad: glad/CMakeFiles/glad.dir/rule
+.PHONY : glad
+
+# clean rule for target.
+glad/CMakeFiles/glad.dir/clean:
+	$(MAKE) $(MAKESILENT) -f glad/CMakeFiles/glad.dir/build.make glad/CMakeFiles/glad.dir/clean
+.PHONY : glad/CMakeFiles/glad.dir/clean
 
 #=============================================================================
 # Special targets to cleanup operation of make.
