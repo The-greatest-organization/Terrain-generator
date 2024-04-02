@@ -10,8 +10,8 @@ message(${CMAKE_SYSTEM})
 include_directories(${PROJECT_SOURCE_DIR}/deps/include)
 link_directories(${PROJECT_SOURCE_DIR}/deps/libs)
 
-set(ENGINE_INCLUDES Engine/Scene.h Engine/SceneManager.h)
-set(ENGINE_SOURCES Engine/Scene.cpp Engine/SceneManager.cpp Engine/Math.hpp Engine/Utils.hpp)
+set(ENGINE_INCLUDES Engine/Scene.hpp Engine/Component.hpp Engine/Camera.hpp Engine/Math.hpp Engine/Utils.hpp)
+set(ENGINE_SOURCES Engine/Scene.cpp Engine/Component.cpp Engine/Camera.cpp)
 
 add_executable(release Main.cpp ${ENGINE_INCLUDES} ${ENGINE_SOURCES})
 

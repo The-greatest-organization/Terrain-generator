@@ -57,14 +57,15 @@ namespace tiny3d {
     // exception classes & functions
     /// @todo create class with exceptions and with posibility to turn it off
 
-    using std::invalid_argument;
+    using arg_error = std::invalid_argument;
+    using index_error = std::out_of_range;
     using std::logic_error;
     using std::runtime_error;
-    using std::out_of_range;
 
     template <typename E>
     void throw_if(bool condition, const E& exception) {
         static_assert(std::is_base_of_v<std::exception, E>);
+        static_assert(std::is_copy_constructible_v<E>);
 
         if (!condition)
             throw E {exception};

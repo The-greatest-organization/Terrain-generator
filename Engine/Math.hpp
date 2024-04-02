@@ -4,6 +4,9 @@
 #include <cmath>
 
 namespace tiny3d {
+    const real32 PI32 = 3.14159265359f;
+    const real64 PI64 = 3.14159265359;
+
     template <typename T = real32>
     class Vector2 {
         public:
@@ -11,12 +14,13 @@ namespace tiny3d {
 
         Vector2(T x, T y) noexcept {
             static_assert(std::is_arithmetic_v<T>);
-            this->data_ = {x, y};
+            this->arr_[0] = x;
+            this->arr_[1] = y;
         }
 
         Vector2() noexcept : Vector2(0, 0) {}
-        Vector2(const Vector2<T>& ref) noexcept : Vector2(ref.arr_[0], ref.arr_[1]) {}
-        Vector2(Vector2<T>&& ref) noexcept : Vector2(ref.arr_[0], ref.arr_[1]) {}
+        Vector2(const Vector2<T>& vec) noexcept : Vector2(vec.arr_[0], vec.arr_[1]) {}
+        Vector2(Vector2<T>&& vec) noexcept : Vector2(vec.arr_[0], vec.arr_[1]) {}
 
         ~Vector2() noexcept = default;
 
@@ -24,7 +28,7 @@ namespace tiny3d {
         Vector2<T>& operator=(Vector2<T>&& other) = default;
 
         T& operator[](usize index) {
-            throw_if<out_of_range>(index <= 2, out_of_range {"Vector2 index is out of range!"});
+            throw_if<index_error>(index <= 2, index_error {"Vector2 index is out of range!"});
             return this->arr_[index];
         }
 
@@ -37,12 +41,7 @@ namespace tiny3d {
         }
 
         private:
-        union {
-            struct {
-                T x, y;
-            } data_;
-            T arr_[2];
-        };
+        T arr_[2];
     };
 
     template <typename T = real32>
@@ -52,12 +51,14 @@ namespace tiny3d {
 
         Vector3(T x, T y, T z) {
             static_assert(std::is_arithmetic_v<T>);
-            this->data_ = {x, y, z};
+            this->arr_[0] = x;
+            this->arr_[1] = y;
+            this->arr_[2] = z;
         }
 
         Vector3() noexcept : Vector3(0, 0, 0) {}
-        Vector3(const Vector3<T>& ref) noexcept : Vector3(ref.arr_[0], ref.arr_[1], ref.arr_[2]) {}
-        Vector3(Vector3<T>&& ref) noexcept : Vector3(ref.arr_[0], ref.arr_[1], ref.arr_[2]) {}
+        Vector3(const Vector3<T>& vec) noexcept : Vector3(vec.arr_[0], vec.arr_[1], vec.arr_[2]) {}
+        Vector3(Vector3<T>&& vec) noexcept : Vector3(vec.arr_[0], vec.arr_[1], vec.arr_[2]) {}
 
         ~Vector3() noexcept = default;
 
@@ -65,7 +66,7 @@ namespace tiny3d {
         Vector3<T>& operator=(Vector3<T>&& other) = default;
 
         T& operator[](usize index) {
-            throw_if<out_of_range>(index <= 3, out_of_range {"Vector3 index is out of range!"});
+            throw_if<index_error>(index <= 3, index_error {"Vector3 index is out of range!"});
             return this->arr_[index];
         }
 
@@ -82,14 +83,9 @@ namespace tiny3d {
         }
 
         private:
-        union {
-            struct {
-                T x, y, z;
-            } data_;
-            T arr_[3];
-        };
+        T arr_[3];
     };
-    
+
     template <typename T = real32>
     class Vector4 {
         public:
@@ -97,12 +93,15 @@ namespace tiny3d {
 
         Vector4(T x, T y, T z, T w) noexcept {
             static_assert(std::is_arithmetic_v<T>);
-            this->data_ = {x, y, z, w};
+            this->arr_[0] = x;
+            this->arr_[1] = y;
+            this->arr_[2] = z;
+            this->arr_[3] = w;
         }
-        
+
         Vector4() noexcept : Vector4(0, 0) {}
-        Vector4(const Vector4<T>& ref) noexcept : Vector4(ref.arr_[0], ref.arr_[1], ref.arr_[2], ref.arr_[3]) {}
-        Vector4(Vector4<T>&& ref) noexcept : Vector4(ref.arr_[0], ref.arr_[1], ref.arr_[2], ref.arr_[3]) {}
+        Vector4(const Vector4<T>& vec) noexcept : Vector4(vec.arr_[0], vec.arr_[1], vec.arr_[2], vec.arr_[3]) {}
+        Vector4(Vector4<T>&& vec) noexcept : Vector4(vec.arr_[0], vec.arr_[1], vec.arr_[2], vec.arr_[3]) {}
 
         ~Vector4() noexcept = default;
 
@@ -110,7 +109,7 @@ namespace tiny3d {
         Vector4<T>& operator=(Vector4<T>&& other) = default;
 
         inline T& operator[](usize index) {
-            throw_if<out_of_range>(index <= 4, out_of_range {"Vector4 index is out of range!"});
+            throw_if<index_error>(index <= 4, index_error {"Vector4 index is out of range!"});
             return this->arr_[index];
         }
 
@@ -131,11 +130,32 @@ namespace tiny3d {
         }
 
         private:
-        union {
-            struct {
-                T x, y, z, w;
-            } data_;
-            T arr_[4];
-        };
+        T arr_[4];
     };
+
+    template <typename T = real32>
+    class Matrix2 {
+        private:
+        T arr_[2][2];
+    };
+
+    template <typename T = real32>
+    class Matrix3 {
+        private:
+        T arr_[3][3];
+    };
+
+    template <typename T = real32>
+    class Matrix4 {
+        private:
+        T arr_[4][4];
+    };
+
+    using V2 = Vector2<>;
+    using V3 = Vector3<>;
+    using V4 = Vector4<>;
+
+    using Mat2 = Matrix2<>;
+    using Mat3 = Matrix3<>;
+    using Mat4 = Matrix4<>;
 }
