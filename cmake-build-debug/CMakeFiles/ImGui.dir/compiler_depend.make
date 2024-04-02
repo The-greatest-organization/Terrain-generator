@@ -23,7 +23,7 @@ CMakeFiles/ImGui.dir/external/imgui/backends/imgui_impl_glfw.o: ../external/imgu
   /usr/include/strings.h \
   /usr/include/assert.h \
   ../external/imgui/backends/imgui_impl_glfw.h \
-  ../deps/include/GLFW/glfw3.h \
+  ../external/glfw/include/GLFW/glfw3.h \
   /usr/lib/gcc/x86_64-linux-gnu/11/include/stdint.h \
   /usr/include/stdint.h \
   /usr/include/x86_64-linux-gnu/bits/types.h \
@@ -1257,18 +1257,6 @@ CMakeFiles/ImGui.dir/external/imgui/imgui_widgets.o: ../external/imgui/imgui_wid
 
 /usr/include/x86_64-linux-gnu/bits/floatn.h:
 
-/usr/include/c++/11/limits:
-
-/usr/include/stdio.h:
-
-/usr/include/x86_64-linux-gnu/bits/types/__locale_t.h:
-
-/usr/lib/gcc/x86_64-linux-gnu/11/include/bmiintrin.h:
-
-/usr/include/x86_64-linux-gnu/bits/waitstatus.h:
-
-/usr/include/c++/11/tr1/special_function_util.h:
-
 ../external/imgui/backends/imgui_impl_opengl3.h:
 
 /usr/lib/gcc/x86_64-linux-gnu/11/include/gfniintrin.h:
@@ -1321,17 +1309,11 @@ CMakeFiles/ImGui.dir/external/imgui/imgui_widgets.o: ../external/imgui/imgui_wid
 
 /usr/include/x86_64-linux-gnu/bits/pthreadtypes-arch.h:
 
-/usr/include/x86_64-linux-gnu/c++/11/bits/cpu_defines.h:
-
-/usr/include/x86_64-linux-gnu/bits/timesize.h:
-
 /usr/include/x86_64-linux-gnu/bits/fp-fast.h:
 
 /usr/lib/gcc/x86_64-linux-gnu/11/include/pmmintrin.h:
 
 /usr/include/c++/11/bits/concept_check.h:
-
-../deps/include/GLFW/glfw3.h:
 
 /usr/include/x86_64-linux-gnu/bits/types/__FILE.h:
 
@@ -1429,6 +1411,16 @@ CMakeFiles/ImGui.dir/external/imgui/imgui_widgets.o: ../external/imgui/imgui_wid
 
 /usr/include/c++/11/bits/std_abs.h:
 
+/usr/include/x86_64-linux-gnu/bits/types/__locale_t.h:
+
+/usr/include/stdio.h:
+
+/usr/lib/gcc/x86_64-linux-gnu/11/include/bmiintrin.h:
+
+/usr/include/x86_64-linux-gnu/bits/waitstatus.h:
+
+/usr/include/c++/11/tr1/special_function_util.h:
+
 /usr/include/c++/11/tr1/poly_laguerre.tcc:
 
 /usr/include/c++/11/cstdlib:
@@ -1436,6 +1428,12 @@ CMakeFiles/ImGui.dir/external/imgui/imgui_widgets.o: ../external/imgui/imgui_wid
 /usr/include/c++/11/bits/stl_iterator_base_types.h:
 
 /usr/include/assert.h:
+
+/usr/include/x86_64-linux-gnu/bits/timesize.h:
+
+/usr/include/x86_64-linux-gnu/c++/11/bits/cpu_defines.h:
+
+/usr/include/c++/11/limits:
 
 /usr/include/x86_64-linux-gnu/bits/typesizes.h:
 
@@ -1540,6 +1538,8 @@ CMakeFiles/ImGui.dir/external/imgui/imgui_widgets.o: ../external/imgui/imgui_wid
 /usr/include/x86_64-linux-gnu/bits/iscanonical.h:
 
 /usr/include/c++/11/bits/specfun.h:
+
+../external/glfw/include/GLFW/glfw3.h:
 
 /usr/include/c++/11/bits/exception_defines.h:
 

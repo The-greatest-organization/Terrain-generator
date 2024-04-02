@@ -6,8 +6,8 @@
 #include <imgui/imgui.h>
 #include <imgui/backends/imgui_impl_opengl3.h>
 #include <imgui/backends/imgui_impl_glfw.h>
-#include "terrain_generator/stb_image.h"
-#include "terrain_generator/generator.h"
+#include "../terrain_generator/stb_image.h"
+#include "../terrain_generator/generator.h"
 
 namespace TerrainGenerator {
     static std::minstd_rand generator;

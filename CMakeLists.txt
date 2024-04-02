@@ -7,9 +7,9 @@ set(CMAKE_C_STANDARD 11)
 include_directories(${PROJECT_SOURCE_DIR}/deps/include)
 link_directories(${PROJECT_SOURCE_DIR}/deps/libs)
 
-add_executable(release Main.cpp
-        Application.cpp
-        Window.cpp)
+add_executable(release Application/Main.cpp
+        Application/Application.cpp
+        Application/Window.cpp)
 
 if (CMAKE_SYSTEM_NAME EQUAL "Windows")
     target_link_libraries(release glfw3 opengl32 gdi32)

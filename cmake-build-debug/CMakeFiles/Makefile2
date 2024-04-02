@@ -65,16 +65,19 @@ CMAKE_BINARY_DIR = /home/natalia/Terrain-generator/cmake-build-debug
 # The main recursive "all" target.
 all: CMakeFiles/release.dir/all
 all: CMakeFiles/ImGui.dir/all
+all: glfw/all
 all: glad/all
 .PHONY : all
 
 # The main recursive "preinstall" target.
+preinstall: glfw/preinstall
 preinstall: glad/preinstall
 .PHONY : preinstall
 
 # The main recursive "clean" target.
 clean: CMakeFiles/release.dir/clean
 clean: CMakeFiles/ImGui.dir/clean
+clean: glfw/clean
 clean: glad/clean
 .PHONY : clean
 
@@ -94,19 +97,70 @@ glad/clean: glad/CMakeFiles/glad.dir/clean
 .PHONY : glad/clean
 
 #=============================================================================
+# Directory level rules for directory glfw
+
+# Recursive "all" directory target.
+glfw/all: glfw/src/all
+glfw/all: glfw/docs/all
+.PHONY : glfw/all
+
+# Recursive "preinstall" directory target.
+glfw/preinstall: glfw/src/preinstall
+glfw/preinstall: glfw/docs/preinstall
+.PHONY : glfw/preinstall
+
+# Recursive "clean" directory target.
+glfw/clean: glfw/CMakeFiles/uninstall.dir/clean
+glfw/clean: glfw/src/clean
+glfw/clean: glfw/docs/clean
+.PHONY : glfw/clean
+
+#=============================================================================
+# Directory level rules for directory glfw/docs
+
+# Recursive "all" directory target.
+glfw/docs/all:
+.PHONY : glfw/docs/all
+
+# Recursive "preinstall" directory target.
+glfw/docs/preinstall:
+.PHONY : glfw/docs/preinstall
+
+# Recursive "clean" directory target.
+glfw/docs/clean:
+.PHONY : glfw/docs/clean
+
+#=============================================================================
+# Directory level rules for directory glfw/src
+
+# Recursive "all" directory target.
+glfw/src/all: glfw/src/CMakeFiles/glfw.dir/all
+.PHONY : glfw/src/all
+
+# Recursive "preinstall" directory target.
+glfw/src/preinstall:
+.PHONY : glfw/src/preinstall
+
+# Recursive "clean" directory target.
+glfw/src/clean: glfw/src/CMakeFiles/glfw.dir/clean
+glfw/src/clean: glfw/src/CMakeFiles/update_mappings.dir/clean
+.PHONY : glfw/src/clean
+
+#=============================================================================
 # Target rules for target CMakeFiles/release.dir
 
 # All Build rule for target.
 CMakeFiles/release.dir/all: CMakeFiles/ImGui.dir/all
+CMakeFiles/release.dir/all: glfw/src/CMakeFiles/glfw.dir/all
 CMakeFiles/release.dir/all: glad/CMakeFiles/glad.dir/all
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/release.dir/build.make CMakeFiles/release.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/release.dir/build.make CMakeFiles/release.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/natalia/Terrain-generator/cmake-build-debug/CMakeFiles --progress-num=11,12,13,14 "Built target release"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/natalia/Terrain-generator/cmake-build-debug/CMakeFiles --progress-num=56,57,58,59 "Built target release"
 .PHONY : CMakeFiles/release.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/release.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/natalia/Terrain-generator/cmake-build-debug/CMakeFiles 14
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/natalia/Terrain-generator/cmake-build-debug/CMakeFiles 59
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/release.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/natalia/Terrain-generator/cmake-build-debug/CMakeFiles 0
 .PHONY : CMakeFiles/release.dir/rule
@@ -124,7 +178,7 @@ CMakeFiles/release.dir/clean:
 # Target rules for target CMakeFiles/ImGui.dir
 
 # All Build rule for target.
-CMakeFiles/ImGui.dir/all:
+CMakeFiles/ImGui.dir/all: glfw/src/CMakeFiles/glfw.dir/all
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/ImGui.dir/build.make CMakeFiles/ImGui.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/ImGui.dir/build.make CMakeFiles/ImGui.dir/build
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/natalia/Terrain-generator/cmake-build-debug/CMakeFiles --progress-num=1,2,3,4,5,6,7,8 "Built target ImGui"
@@ -132,7 +186,7 @@ CMakeFiles/ImGui.dir/all:
 
 # Build rule for subdir invocation for target.
 CMakeFiles/ImGui.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/natalia/Terrain-generator/cmake-build-debug/CMakeFiles 8
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/natalia/Terrain-generator/cmake-build-debug/CMakeFiles 53
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/ImGui.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/natalia/Terrain-generator/cmake-build-debug/CMakeFiles 0
 .PHONY : CMakeFiles/ImGui.dir/rule
@@ -145,6 +199,84 @@ ImGui: CMakeFiles/ImGui.dir/rule
 CMakeFiles/ImGui.dir/clean:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/ImGui.dir/build.make CMakeFiles/ImGui.dir/clean
 .PHONY : CMakeFiles/ImGui.dir/clean
+
+#=============================================================================
+# Target rules for target glfw/CMakeFiles/uninstall.dir
+
+# All Build rule for target.
+glfw/CMakeFiles/uninstall.dir/all:
+	$(MAKE) $(MAKESILENT) -f glfw/CMakeFiles/uninstall.dir/build.make glfw/CMakeFiles/uninstall.dir/depend
+	$(MAKE) $(MAKESILENT) -f glfw/CMakeFiles/uninstall.dir/build.make glfw/CMakeFiles/uninstall.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/natalia/Terrain-generator/cmake-build-debug/CMakeFiles --progress-num= "Built target uninstall"
+.PHONY : glfw/CMakeFiles/uninstall.dir/all
+
+# Build rule for subdir invocation for target.
+glfw/CMakeFiles/uninstall.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/natalia/Terrain-generator/cmake-build-debug/CMakeFiles 0
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 glfw/CMakeFiles/uninstall.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/natalia/Terrain-generator/cmake-build-debug/CMakeFiles 0
+.PHONY : glfw/CMakeFiles/uninstall.dir/rule
+
+# Convenience name for target.
+uninstall: glfw/CMakeFiles/uninstall.dir/rule
+.PHONY : uninstall
+
+# clean rule for target.
+glfw/CMakeFiles/uninstall.dir/clean:
+	$(MAKE) $(MAKESILENT) -f glfw/CMakeFiles/uninstall.dir/build.make glfw/CMakeFiles/uninstall.dir/clean
+.PHONY : glfw/CMakeFiles/uninstall.dir/clean
+
+#=============================================================================
+# Target rules for target glfw/src/CMakeFiles/glfw.dir
+
+# All Build rule for target.
+glfw/src/CMakeFiles/glfw.dir/all:
+	$(MAKE) $(MAKESILENT) -f glfw/src/CMakeFiles/glfw.dir/build.make glfw/src/CMakeFiles/glfw.dir/depend
+	$(MAKE) $(MAKESILENT) -f glfw/src/CMakeFiles/glfw.dir/build.make glfw/src/CMakeFiles/glfw.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/natalia/Terrain-generator/cmake-build-debug/CMakeFiles --progress-num=11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55 "Built target glfw"
+.PHONY : glfw/src/CMakeFiles/glfw.dir/all
+
+# Build rule for subdir invocation for target.
+glfw/src/CMakeFiles/glfw.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/natalia/Terrain-generator/cmake-build-debug/CMakeFiles 45
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 glfw/src/CMakeFiles/glfw.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/natalia/Terrain-generator/cmake-build-debug/CMakeFiles 0
+.PHONY : glfw/src/CMakeFiles/glfw.dir/rule
+
+# Convenience name for target.
+glfw: glfw/src/CMakeFiles/glfw.dir/rule
+.PHONY : glfw
+
+# clean rule for target.
+glfw/src/CMakeFiles/glfw.dir/clean:
+	$(MAKE) $(MAKESILENT) -f glfw/src/CMakeFiles/glfw.dir/build.make glfw/src/CMakeFiles/glfw.dir/clean
+.PHONY : glfw/src/CMakeFiles/glfw.dir/clean
+
+#=============================================================================
+# Target rules for target glfw/src/CMakeFiles/update_mappings.dir
+
+# All Build rule for target.
+glfw/src/CMakeFiles/update_mappings.dir/all:
+	$(MAKE) $(MAKESILENT) -f glfw/src/CMakeFiles/update_mappings.dir/build.make glfw/src/CMakeFiles/update_mappings.dir/depend
+	$(MAKE) $(MAKESILENT) -f glfw/src/CMakeFiles/update_mappings.dir/build.make glfw/src/CMakeFiles/update_mappings.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/natalia/Terrain-generator/cmake-build-debug/CMakeFiles --progress-num=60 "Built target update_mappings"
+.PHONY : glfw/src/CMakeFiles/update_mappings.dir/all
+
+# Build rule for subdir invocation for target.
+glfw/src/CMakeFiles/update_mappings.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/natalia/Terrain-generator/cmake-build-debug/CMakeFiles 1
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 glfw/src/CMakeFiles/update_mappings.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/natalia/Terrain-generator/cmake-build-debug/CMakeFiles 0
+.PHONY : glfw/src/CMakeFiles/update_mappings.dir/rule
+
+# Convenience name for target.
+update_mappings: glfw/src/CMakeFiles/update_mappings.dir/rule
+.PHONY : update_mappings
+
+# clean rule for target.
+glfw/src/CMakeFiles/update_mappings.dir/clean:
+	$(MAKE) $(MAKESILENT) -f glfw/src/CMakeFiles/update_mappings.dir/build.make glfw/src/CMakeFiles/update_mappings.dir/clean
+.PHONY : glfw/src/CMakeFiles/update_mappings.dir/clean
 
 #=============================================================================
 # Target rules for target glad/CMakeFiles/glad.dir

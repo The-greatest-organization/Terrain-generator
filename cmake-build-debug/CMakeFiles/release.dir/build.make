@@ -69,63 +69,67 @@ include CMakeFiles/release.dir/progress.make
 # Include the compile flags for this target's objects.
 include CMakeFiles/release.dir/flags.make
 
-CMakeFiles/release.dir/Main.o: CMakeFiles/release.dir/flags.make
-CMakeFiles/release.dir/Main.o: ../Main.cpp
-CMakeFiles/release.dir/Main.o: CMakeFiles/release.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/natalia/Terrain-generator/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/release.dir/Main.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/release.dir/Main.o -MF CMakeFiles/release.dir/Main.o.d -o CMakeFiles/release.dir/Main.o -c /home/natalia/Terrain-generator/Main.cpp
+CMakeFiles/release.dir/Application/Main.o: CMakeFiles/release.dir/flags.make
+CMakeFiles/release.dir/Application/Main.o: ../Application/Main.cpp
+CMakeFiles/release.dir/Application/Main.o: CMakeFiles/release.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/natalia/Terrain-generator/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/release.dir/Application/Main.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/release.dir/Application/Main.o -MF CMakeFiles/release.dir/Application/Main.o.d -o CMakeFiles/release.dir/Application/Main.o -c /home/natalia/Terrain-generator/Application/Main.cpp
 
-CMakeFiles/release.dir/Main.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/release.dir/Main.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/natalia/Terrain-generator/Main.cpp > CMakeFiles/release.dir/Main.i
+CMakeFiles/release.dir/Application/Main.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/release.dir/Application/Main.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/natalia/Terrain-generator/Application/Main.cpp > CMakeFiles/release.dir/Application/Main.i
 
-CMakeFiles/release.dir/Main.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/release.dir/Main.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/natalia/Terrain-generator/Main.cpp -o CMakeFiles/release.dir/Main.s
+CMakeFiles/release.dir/Application/Main.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/release.dir/Application/Main.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/natalia/Terrain-generator/Application/Main.cpp -o CMakeFiles/release.dir/Application/Main.s
 
-CMakeFiles/release.dir/Application.o: CMakeFiles/release.dir/flags.make
-CMakeFiles/release.dir/Application.o: ../Application.cpp
-CMakeFiles/release.dir/Application.o: CMakeFiles/release.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/natalia/Terrain-generator/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/release.dir/Application.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/release.dir/Application.o -MF CMakeFiles/release.dir/Application.o.d -o CMakeFiles/release.dir/Application.o -c /home/natalia/Terrain-generator/Application.cpp
+CMakeFiles/release.dir/Application/Application.o: CMakeFiles/release.dir/flags.make
+CMakeFiles/release.dir/Application/Application.o: ../Application/Application.cpp
+CMakeFiles/release.dir/Application/Application.o: CMakeFiles/release.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/natalia/Terrain-generator/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/release.dir/Application/Application.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/release.dir/Application/Application.o -MF CMakeFiles/release.dir/Application/Application.o.d -o CMakeFiles/release.dir/Application/Application.o -c /home/natalia/Terrain-generator/Application/Application.cpp
 
-CMakeFiles/release.dir/Application.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/release.dir/Application.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/natalia/Terrain-generator/Application.cpp > CMakeFiles/release.dir/Application.i
+CMakeFiles/release.dir/Application/Application.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/release.dir/Application/Application.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/natalia/Terrain-generator/Application/Application.cpp > CMakeFiles/release.dir/Application/Application.i
 
-CMakeFiles/release.dir/Application.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/release.dir/Application.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/natalia/Terrain-generator/Application.cpp -o CMakeFiles/release.dir/Application.s
+CMakeFiles/release.dir/Application/Application.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/release.dir/Application/Application.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/natalia/Terrain-generator/Application/Application.cpp -o CMakeFiles/release.dir/Application/Application.s
 
-CMakeFiles/release.dir/Window.o: CMakeFiles/release.dir/flags.make
-CMakeFiles/release.dir/Window.o: ../Window.cpp
-CMakeFiles/release.dir/Window.o: CMakeFiles/release.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/natalia/Terrain-generator/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/release.dir/Window.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/release.dir/Window.o -MF CMakeFiles/release.dir/Window.o.d -o CMakeFiles/release.dir/Window.o -c /home/natalia/Terrain-generator/Window.cpp
+CMakeFiles/release.dir/Application/Window.o: CMakeFiles/release.dir/flags.make
+CMakeFiles/release.dir/Application/Window.o: ../Application/Window.cpp
+CMakeFiles/release.dir/Application/Window.o: CMakeFiles/release.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/natalia/Terrain-generator/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/release.dir/Application/Window.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/release.dir/Application/Window.o -MF CMakeFiles/release.dir/Application/Window.o.d -o CMakeFiles/release.dir/Application/Window.o -c /home/natalia/Terrain-generator/Application/Window.cpp
 
-CMakeFiles/release.dir/Window.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/release.dir/Window.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/natalia/Terrain-generator/Window.cpp > CMakeFiles/release.dir/Window.i
+CMakeFiles/release.dir/Application/Window.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/release.dir/Application/Window.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/natalia/Terrain-generator/Application/Window.cpp > CMakeFiles/release.dir/Application/Window.i
 
-CMakeFiles/release.dir/Window.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/release.dir/Window.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/natalia/Terrain-generator/Window.cpp -o CMakeFiles/release.dir/Window.s
+CMakeFiles/release.dir/Application/Window.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/release.dir/Application/Window.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/natalia/Terrain-generator/Application/Window.cpp -o CMakeFiles/release.dir/Application/Window.s
 
 # Object files for target release
 release_OBJECTS = \
-"CMakeFiles/release.dir/Main.o" \
-"CMakeFiles/release.dir/Application.o" \
-"CMakeFiles/release.dir/Window.o"
+"CMakeFiles/release.dir/Application/Main.o" \
+"CMakeFiles/release.dir/Application/Application.o" \
+"CMakeFiles/release.dir/Application/Window.o"
 
 # External object files for target release
 release_EXTERNAL_OBJECTS =
 
-release: CMakeFiles/release.dir/Main.o
-release: CMakeFiles/release.dir/Application.o
-release: CMakeFiles/release.dir/Window.o
+release: CMakeFiles/release.dir/Application/Main.o
+release: CMakeFiles/release.dir/Application/Application.o
+release: CMakeFiles/release.dir/Application/Window.o
 release: CMakeFiles/release.dir/build.make
+release: glfw/src/libglfw3.a
 release: glad/libglad.a
 release: libImGui.a
+release: glfw/src/libglfw3.a
+release: /usr/lib/x86_64-linux-gnu/librt.a
+release: /usr/lib/x86_64-linux-gnu/libm.so
 release: CMakeFiles/release.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/natalia/Terrain-generator/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Linking CXX executable release"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/release.dir/link.txt --verbose=$(VERBOSE)
