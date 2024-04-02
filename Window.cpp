@@ -12,8 +12,8 @@
 namespace TerrainGenerator {
     static std::minstd_rand generator;
     static bool GLFWInitialized = false;
-    static Int32 resolution = 0;
-    static Int32 size = 0;
+    static Int32 resolution = 15;
+    static Int32 size = 20;
     static Int32 seed = generator();
     static const char *biomes[]{"Plain", "Mountains", "Desert", "Sea"};
     static const Int32 countBiomes = 4;
@@ -126,8 +126,8 @@ namespace TerrainGenerator {
     }
 
     void showPreview(Float32 windowWidth, Float32 windowHeight) {
-        ImGui::BeginChild("Preview", {windowWidth / 4, windowHeight / 4}, true);
-
+        ImGui::BeginChild("Preview", {windowWidth / 4, windowHeight * 1.5f / 4}, true);
+        ImGui::SeparatorText("Preview:");
         Terrain tr = Terrain(size, maxHeight, seed, resolution, intensityTerrain, frequencyTerrain, amplitudeTerrain,
                              stepsTerrain,
                              stepsHydraulic, subIntensityHydraulic, addIntensityHydraulic, stepsRealHydraulic,
@@ -145,12 +145,11 @@ namespace TerrainGenerator {
         }
         ImGui::Image((void *) (intptr_t) previewTexture, ImVec2(previewWidth, previewHeight));
 
-        ImGui::Text("Preview");
         ImGui::EndChild();
     }
 
     void showSettings(Float32 windowWidth, Float32 windowHeight) {
-        ImGui::BeginChild("Settings", {windowWidth / 4, 3 * windowHeight / 4}, true);
+        ImGui::BeginChild("Settings", {windowWidth / 4, windowHeight * 2.5f / 4}, true);
 
         ImGui::SeparatorText("Main settings:");
         ImGui::InputInt("Seed", &seed);

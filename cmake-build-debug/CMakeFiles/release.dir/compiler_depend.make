@@ -651,63 +651,8 @@ CMakeFiles/release.dir/Window.o: ../Window.cpp \
   /usr/lib/gcc/x86_64-linux-gnu/11/include/xmmintrin.h \
   /usr/lib/gcc/x86_64-linux-gnu/11/include/mmintrin.h \
   /usr/lib/gcc/x86_64-linux-gnu/11/include/mm_malloc.h \
-  ../terrain_generator/stb_image_write.h \
-  /usr/include/c++/11/filesystem \
-  /usr/include/c++/11/bits/fs_fwd.h \
-  /usr/include/c++/11/chrono \
-  /usr/include/c++/11/ratio \
-  /usr/include/c++/11/ctime \
-  /usr/include/c++/11/bits/parse_numbers.h \
-  /usr/include/c++/11/bits/fs_path.h \
-  /usr/include/c++/11/locale \
-  /usr/include/c++/11/bits/locale_facets_nonio.h \
-  /usr/include/x86_64-linux-gnu/c++/11/bits/time_members.h \
-  /usr/include/x86_64-linux-gnu/c++/11/bits/messages_members.h \
-  /usr/include/libintl.h \
-  /usr/include/c++/11/bits/codecvt.h \
-  /usr/include/c++/11/bits/locale_facets_nonio.tcc \
-  /usr/include/c++/11/bits/locale_conv.h \
-  /usr/include/c++/11/bits/unique_ptr.h \
-  /usr/include/c++/11/iomanip \
-  /usr/include/c++/11/bits/quoted_string.h \
-  /usr/include/c++/11/sstream \
-  /usr/include/c++/11/bits/sstream.tcc \
-  /usr/include/c++/11/codecvt \
-  /usr/include/c++/11/ext/concurrence.h \
-  /usr/include/c++/11/bits/shared_ptr.h \
-  /usr/include/c++/11/bits/shared_ptr_base.h \
-  /usr/include/c++/11/bits/allocated_ptr.h \
-  /usr/include/c++/11/bits/fs_dir.h \
-  /usr/include/c++/11/bits/fs_ops.h
+  ../terrain_generator/stb_image_write.h
 
-
-/usr/include/c++/11/bits/fs_ops.h:
-
-/usr/include/c++/11/bits/fs_dir.h:
-
-/usr/include/c++/11/sstream:
-
-/usr/include/c++/11/bits/quoted_string.h:
-
-/usr/include/c++/11/bits/locale_conv.h:
-
-/usr/include/c++/11/bits/locale_facets_nonio.tcc:
-
-/usr/include/libintl.h:
-
-/usr/include/x86_64-linux-gnu/c++/11/bits/messages_members.h:
-
-/usr/include/x86_64-linux-gnu/c++/11/bits/time_members.h:
-
-/usr/include/c++/11/bits/locale_facets_nonio.h:
-
-/usr/include/c++/11/bits/parse_numbers.h:
-
-/usr/include/c++/11/ctime:
-
-/usr/include/c++/11/ratio:
-
-/usr/include/c++/11/filesystem:
 
 /usr/lib/gcc/x86_64-linux-gnu/11/include/mmintrin.h:
 
@@ -935,8 +880,6 @@ CMakeFiles/release.dir/Window.o: ../Window.cpp \
 
 /usr/include/c++/11/bits/functexcept.h:
 
-/usr/include/c++/11/bits/sstream.tcc:
-
 /usr/include/c++/11/new:
 
 /usr/include/x86_64-linux-gnu/bits/struct_mutex.h:
@@ -974,8 +917,6 @@ CMakeFiles/release.dir/Window.o: ../Window.cpp \
 /usr/include/c++/11/memory:
 
 /usr/include/c++/11/bits/uses_allocator.h:
-
-/usr/include/c++/11/chrono:
 
 /usr/include/x86_64-linux-gnu/bits/wordsize.h:
 
@@ -1097,8 +1038,6 @@ CMakeFiles/release.dir/Window.o: ../Window.cpp \
 
 /usr/include/c++/11/unordered_map:
 
-/usr/include/c++/11/iomanip:
-
 /usr/include/c++/11/cctype:
 
 /usr/include/c++/11/bits/hashtable.h:
@@ -1114,8 +1053,6 @@ CMakeFiles/release.dir/Window.o: ../Window.cpp \
 /usr/include/c++/11/bits/erase_if.h:
 
 /usr/include/c++/11/bits/stl_vector.h:
-
-/usr/include/c++/11/bits/fs_fwd.h:
 
 /usr/include/x86_64-linux-gnu/bits/types/struct___jmp_buf_tag.h:
 
@@ -1136,8 +1073,6 @@ CMakeFiles/release.dir/Window.o: ../Window.cpp \
 /usr/include/x86_64-linux-gnu/sys/types.h:
 
 /usr/include/x86_64-linux-gnu/bits/uintn-identity.h:
-
-/usr/include/c++/11/bits/fs_path.h:
 
 /usr/include/c++/11/bits/random.tcc:
 
@@ -1174,8 +1109,6 @@ CMakeFiles/release.dir/Window.o: ../Window.cpp \
 /usr/include/x86_64-linux-gnu/bits/endian.h:
 
 ../terrain_generator/generator.h:
-
-/usr/include/c++/11/locale:
 
 /usr/include/ctype.h:
 
@@ -1232,8 +1165,6 @@ CMakeFiles/release.dir/Window.o: ../Window.cpp \
 /usr/include/x86_64-linux-gnu/bits/libm-simd-decl-stubs.h:
 
 /usr/include/x86_64-linux-gnu/bits/flt-eval-method.h:
-
-/usr/include/c++/11/bits/codecvt.h:
 
 /usr/include/c++/11/bits/basic_ios.tcc:
 
@@ -1292,8 +1223,6 @@ CMakeFiles/release.dir/Window.o: ../Window.cpp \
 ../external/imgui/imgui.h:
 
 /usr/lib/gcc/x86_64-linux-gnu/11/include/float.h:
-
-/usr/include/c++/11/codecvt:
 
 /usr/include/c++/11/bits/streambuf.tcc:
 

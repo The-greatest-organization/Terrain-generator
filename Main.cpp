@@ -6,6 +6,7 @@ class TerrainGeneratorApp : public TerrainGenerator::Application {
     }
 };
 
+
 int main(void) {
     auto terrainGeneratorApp = std::make_unique<TerrainGeneratorApp>();
     terrainGeneratorApp->start(1024, 1024, "aa");
