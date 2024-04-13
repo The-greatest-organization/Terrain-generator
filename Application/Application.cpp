@@ -3,9 +3,9 @@
 #include "Event.h"
 
 namespace TerrainGenerator {
-    Application::Application() {}
+    Application::Application() = default;
 
-    Application::~Application() {}
+    Application::~Application() = default;
 
     int Application::start(Uint32 windowWidth, Uint32 windowHeight, const char *title) {
         window_ = std::make_unique<Window>(title, windowWidth, windowHeight);
