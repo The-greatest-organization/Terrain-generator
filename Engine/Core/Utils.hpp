@@ -2,7 +2,8 @@
 
 #include <cstdint>
 #include <cfloat>
-#include <memory>
+
+#include <cassert>
 
 #include <string>
 #include <sstream>
@@ -33,19 +34,6 @@ namespace tiny3d {
 
     using real32 = _Float32;
     using real64 = _Float64;
-    using real128 = __float128;
-
-    // memory types
-    /// @todo add custom allocators to my engine (STL compatible)
-
-    using std::make_unique;
-    using std::make_shared;
-
-    using std::shared_ptr;
-    using std::unique_ptr;
-
-    template <typename T>
-    using raw_ptr = T*;
 
     // string types
     /// @todo add custom string classes (and custom STL with custom allocators)
@@ -53,21 +41,4 @@ namespace tiny3d {
     using std::string;
     using input_sstream = std::istringstream;
     using output_sstream = std::ostringstream;
-
-    // exception classes & functions
-    /// @todo create class with exceptions and with posibility to turn it off
-
-    using arg_error = std::invalid_argument;
-    using index_error = std::out_of_range;
-    using std::logic_error;
-    using std::runtime_error;
-
-    template <typename E>
-    void throw_if(bool condition, const E& exception) {
-        static_assert(std::is_base_of_v<std::exception, E>);
-        static_assert(std::is_copy_constructible_v<E>);
-
-        if (!condition)
-            throw E {exception};
-    }
 }

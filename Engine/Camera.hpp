@@ -2,7 +2,6 @@
 
 #include "Component.hpp"
 #include "Math.hpp"
-#include "Utils.hpp"
 
 namespace tiny3d {
 

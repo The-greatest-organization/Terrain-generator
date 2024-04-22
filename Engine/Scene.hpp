@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Utils.hpp"
+#include "Core/Utils.hpp"
 
 namespace tiny3d {
     // Scene = a linked list

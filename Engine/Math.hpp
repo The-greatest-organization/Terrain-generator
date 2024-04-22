@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Utils.hpp"
+#include "Core/Utils.hpp"
 #include <cmath>
 
 namespace tiny3d {
@@ -14,8 +14,8 @@ namespace tiny3d {
 
         Vector2(T x, T y) noexcept {
             static_assert(std::is_arithmetic_v<T>);
-            this->arr_[0] = x;
-            this->arr_[1] = y;
+            arr_[0] = x;
+            arr_[1] = y;
         }
 
         Vector2() noexcept : Vector2(0, 0) {}
@@ -27,17 +27,22 @@ namespace tiny3d {
         Vector2<T>& operator=(const Vector2<T>& other) = default;
         Vector2<T>& operator=(Vector2<T>&& other) = default;
 
-        T& operator[](usize index) {
-            throw_if<index_error>(index <= 2, index_error {"Vector2 index is out of range!"});
-            return this->arr_[index];
+        inline T& operator[](usize index) {
+            assert(index <= 2);
+            return arr_[index];
         }
 
-        inline T& X() noexcept {
-            return this->arr_[0];
+        inline T operator[](usize index) const {
+            assert(index <= 2);
+            return arr_[index];
         }
 
-        inline T& Y() noexcept {
-            return this->arr_[1];
+        inline T& x() noexcept {
+            return arr_[0];
+        }
+
+        inline T& y() noexcept {
+            return arr_[1];
         }
 
         private:
@@ -51,9 +56,9 @@ namespace tiny3d {
 
         Vector3(T x, T y, T z) {
             static_assert(std::is_arithmetic_v<T>);
-            this->arr_[0] = x;
-            this->arr_[1] = y;
-            this->arr_[2] = z;
+            arr_[0] = x;
+            arr_[1] = y;
+            arr_[2] = z;
         }
 
         Vector3() noexcept : Vector3(0, 0, 0) {}
@@ -65,21 +70,26 @@ namespace tiny3d {
         Vector3<T>& operator=(const Vector3<T>& other) = default;
         Vector3<T>& operator=(Vector3<T>&& other) = default;
 
-        T& operator[](usize index) {
-            throw_if<index_error>(index <= 3, index_error {"Vector3 index is out of range!"});
-            return this->arr_[index];
+        inline T& operator[](usize index) {
+            assert(index <= 3);
+            return arr_[index];
         }
 
-        inline T& X() noexcept {
-            return this->arr_[0];
+        inline T operator[](usize index) const {
+            assert(index <= 3);
+            return arr_[index];
         }
 
-        inline T& Y() noexcept {
-            return this->arr_[1];
+        inline T& x() noexcept {
+            return arr_[0];
         }
 
-        inline T& Z() noexcept {
-            return this->arr_[2];
+        inline T& y() noexcept {
+            return arr_[1];
+        }
+
+        inline T& z() noexcept {
+            return arr_[2];
         }
 
         private:
@@ -93,10 +103,10 @@ namespace tiny3d {
 
         Vector4(T x, T y, T z, T w) noexcept {
             static_assert(std::is_arithmetic_v<T>);
-            this->arr_[0] = x;
-            this->arr_[1] = y;
-            this->arr_[2] = z;
-            this->arr_[3] = w;
+            arr_[0] = x;
+            arr_[1] = y;
+            arr_[2] = z;
+            arr_[3] = w;
         }
 
         Vector4() noexcept : Vector4(0, 0) {}
@@ -109,24 +119,29 @@ namespace tiny3d {
         Vector4<T>& operator=(Vector4<T>&& other) = default;
 
         inline T& operator[](usize index) {
-            throw_if<index_error>(index <= 4, index_error {"Vector4 index is out of range!"});
-            return this->arr_[index];
+            assert(index <= 4);
+            return arr_[index];
         }
 
-        inline T& X() noexcept {
-            return this->arr_[0];
+        inline T operator[](usize index) const {
+            assert(index <= 4);
+            return arr_[index];
         }
 
-        inline T& Y() noexcept {
-            return this->arr_[1];
+        inline T& x() noexcept {
+            return arr_[0];
         }
 
-        inline T& Z() noexcept {
-            return this->arr_[2];
+        inline T& y() noexcept {
+            return arr_[1];
         }
 
-        inline T& W() noexcept {
-            return this->arr_[3];
+        inline T& z() noexcept {
+            return arr_[2];
+        }
+
+        inline T& w() noexcept {
+            return arr_[3];
         }
 
         private:
@@ -135,18 +150,68 @@ namespace tiny3d {
 
     template <typename T = real32>
     class Matrix2 {
+        public:
+        using ValueType = T;
+
+        Matrix2(T* ptr) {
+            static_assert(std::is_arithmetic_v<T>);
+            assert(ptr != nullptr);
+
+            arr_[0][0] = ptr[0][0];
+            arr_[0][1] = ptr[0][1];
+
+            arr_[1][0] = ptr[1][0];
+            arr_[1][1] = ptr[1][1];
+        }
+
+        Matrix2(T x, T y) noexcept {
+            static_assert(std::is_arithmetic_v<T>);
+
+            arr_[0][0] = x;
+            arr_[0][1] = 0;
+
+            arr_[1][0] = 0;
+            arr_[1][1] = y;
+        }
+
         private:
         T arr_[2][2];
     };
 
     template <typename T = real32>
     class Matrix3 {
+        public:
+        using ValueType = T;
+
+        Matrix3(T* ptr) {
+            static_assert(std::is_arithmetic_v<T>);
+        }
+
+        Matrix3(T x, T y, T z) noexcept {
+            static_assert(std::is_arithmetic_v<T>);
+
+            arr_[0][0] = x;
+            arr_[0][1] = 0;
+            arr_[0][2] = 0;
+
+            arr_[1][0] = 0;
+            arr_[1][1] = y;
+            arr_[1][2] = 0;
+
+            arr_[2][0] = 0;
+            arr_[2][1] = 0;
+            arr_[2][2] = z;
+        }
+
         private:
         T arr_[3][3];
     };
 
     template <typename T = real32>
     class Matrix4 {
+        public:
+        using ValueType = T;
+
         private:
         T arr_[4][4];
     };

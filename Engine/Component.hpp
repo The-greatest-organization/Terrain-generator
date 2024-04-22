@@ -1,6 +1,7 @@
 #pragma once
 
-#include "Utils.hpp"
+#include "Core/Utils.hpp"
+#include "Core/Memory.hpp"
 #include "Math.hpp"
 
 namespace tiny3d {
@@ -8,23 +9,25 @@ namespace tiny3d {
     // Data = the body of component. Each component is based on some data
     // Priority = the importance of component (for dispatcher)
 
+    /// @todo -- (BIG ONE) -- Rewrite component system with resource manager which works with raw memory
+
     template <typename T>
     class ObjectComponent {
         public:
+        /// @todo: Realize all ctors I need (rule of 5)
+
         shared_ptr<T> Data() {
-            throw_if<runtime_error>(this->data_ == nullptr, runtime_error {"Component's data can't be null!"});
             return this->data_;
         }
 
         protected:
         void set_component(shared_ptr<T> data) {
-            throw_if<arg_error>(static_cast<bool>(data), arg_error {"Component's data can't be null!"});
-            this->data_.reset();
-            this->data_ = data;
+            data_.reset();
+            data_ = data;
         }
 
         void set_component(raw_ptr<T> data) {
-            throw_if<arg_error>(data == nullptr, arg_error {"Component's data can't be null!"});
+            assert(data != nullptr);
             this->data_.reset();
             this->data_ = make_shared<T>(data);
         }
@@ -57,7 +60,8 @@ namespace tiny3d {
     class Rotation3D : public ObjectComponent<V3> {};
     class Scale3D : public ObjectComponent<V3> {};
 
-    /// @todo add graphics components
+    /// @todo implement graphics components
+
     // Graphics components will be looking someting like this
     // class RenderComponent : public ObjectComponent<RenderData> {};
 
