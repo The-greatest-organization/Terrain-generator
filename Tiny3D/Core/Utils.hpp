@@ -1,3 +1,4 @@
+// by andrew.la
 #pragma once
 
 #include <cstdint>
@@ -10,7 +11,13 @@
 
 #include <type_traits>
 
-/// @todo create different headers for each system
+#ifdef RELEASE
+#undef assert
+#define assert(x) 
+#endif
+
+/// @todo create STL-like library with my own data structures (It will not be done)
+/// @todo сделать заебись
 
 namespace tiny3d {
     // some arithmetic types
@@ -30,13 +37,8 @@ namespace tiny3d {
     using isize = std::ptrdiff_t;
     using usize = std::size_t;
 
-    /// @todo replace this freaky defines to normal data types (if such types exist)
-
-    using real32 = _Float32;
-    using real64 = _Float64;
-
-    // string types
-    /// @todo add custom string classes (and custom STL with custom allocators)
+    using real32 = std::float_t;
+    using real64 = std::double_t;
 
     using std::string;
     using input_sstream = std::istringstream;

@@ -1,7 +1,8 @@
+// by andrew.la
 #pragma once
 
+#include "Core/Math.hpp"
 #include "Component.hpp"
-#include "Math.hpp"
 
 namespace tiny3d {
 

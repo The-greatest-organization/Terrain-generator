@@ -1,24 +1,22 @@
-set(CMAKE_MINIMUM_REQUIRED_VERSION 3.2)
+cmake_minimum_required(VERSION 3.12)
+cmake_policy(VERSION 3.12)
 project(TerrainGenerator)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_C_STANDARD 11)
 
 message("Build has been started!")
 message(${CMAKE_SYSTEM})
+message(${CMAKE_SYSTEM_NAME})
 
-include_directories(${PROJECT_SOURCE_DIR}/deps/include)
-link_directories(${PROJECT_SOURCE_DIR}/deps/libs)
+# TODO(andrew): build glfw, gtest, gmock
 
-set(ENGINE_INCLUDES Engine/Scene.hpp Engine/Component.hpp Engine/Camera.hpp Engine/Math.hpp Engine/Core/Utils.hpp)
-set(ENGINE_SOURCES Engine/Scene.cpp Engine/Component.cpp Engine/Camera.cpp)
+set(EXTERNAL_DIR ${PROJECT_SOURCE_DIR}/External)
+set(ENGINE_DIR ${PROJECT_SOURCE_DIR}/Tiny3D)
+set(CORE_DIR ${ENGINE_DIR}/Core)
 
-add_executable(release Main.cpp ${ENGINE_INCLUDES} ${ENGINE_SOURCES})
+file(GLOB CORE_FILES ${CORE_DIR}/*.cpp ${CORE_DIR}/*.hpp)
+file(GLOB ENGINE_FILES ${ENGINE_DIR}/*.cpp ${ENGINE_DIR}/*.hpp)
 
-if (${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
-    target_link_libraries(release glfw3 opengl32 gdi32)
-elseif (${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
-    target_link_libraries(release glfw3 GL)
-else ()
-    message(FATAL_ERROR "FUCK YOU WITH SUCH SYSTEM!!!")
-endif ()
+add_executable(test_suit Main.cpp ${CORE_FILES} ${ENGINE_FILES})
+target_include_directories(test_suit PRIVATE ${EXTERNAL_DIR}/glm/)

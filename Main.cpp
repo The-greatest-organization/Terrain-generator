@@ -1,8 +1,11 @@
-#include <GLFW/glfw3.h>
-#include <cassert>
+#include <iostream>
+#include <type_traits>
+#include "Tiny3D/Component.hpp"
 
-#include "Engine/Math.hpp"
+void foo(tiny3d::ObjectComponent* comp) {
+    auto scale = reinterpret_cast<tiny3d::Scale2D*>(comp);
+}
 
-int main(int argc, char** argv) {
-    return 0;
+int main() {
+    tiny3d::Scale2D* comp = new tiny3d::Scale2D(1, 2);
 }

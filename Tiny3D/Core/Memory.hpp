@@ -1,11 +1,13 @@
+// by andrew.la
 #pragma once
 
 #include "Utils.hpp"
 #include <memory>
 
 namespace tiny3d {
-    using std::unique_ptr;
-    using std::shared_ptr;
+    template <typename T> using unique_pointer = std::unique_ptr<T>;
+    template <typename T> using shared_pointer = std::shared_ptr<T>;
+    template <typename T> using weak_pointer = std::weak_ptr<T>;
     template <typename T> using raw_ptr = T*;
 
     struct Allocator {
@@ -13,11 +15,11 @@ namespace tiny3d {
 
         Allocator(usize size);
 
-        Allocator(const Allocator& allocator);
+        Allocator(const Allocator& allocator) = delete;
         Allocator(Allocator&& allocator) noexcept;
 
-        Allocator& operator=(const Allocator& allocator);
-        Allocator& operator=(Allocator&& allocator) noexcept;
+        Allocator& operator=(const Allocator& allocator) = delete;
+        Allocator& operator=(Allocator&& allocator) = delete;
 
         /// @todo add 'maybe_unused' attribute to alignment parameter
 
@@ -29,7 +31,7 @@ namespace tiny3d {
 
         protected:
         using Byte = uint8;
-        using BytePtr = uint8*;
+        using BytePtr = raw_ptr<uint8>;
 
         usize arena_size_;
         BytePtr arena_addr_;
@@ -62,22 +64,24 @@ namespace tiny3d {
         BytePtr end_addr_;
     };
 
-    /// @todo Realize a BigBoy Allocator with so many parameters and optimizations
+    /// @todo Realize a pool allocator with so many parameters and optimizations
+    // Big boy allocator
 
     struct PoolAllocator : Allocator {
-        struct Desc {};
+
+        // Pool parameters
+        struct Desc {
+        };
 
         PoolAllocator() = delete;
 
         PoolAllocator(const Desc& desc);
 
-        PoolAllocator(const PoolAllocator& allocator);
-        PoolAllocator(PoolAllocator&& allocator) noexcept;
+        PoolAllocator(const PoolAllocator& allocator) = delete;
+        PoolAllocator(PoolAllocator&& allocator) = delete;
 
         void* Allocate(usize size, usize alignment);
         void* Reallocate(void* ptr, usize new_size);
         void Free(void* ptr);
     };
-
-    /// @todo Realize STL adaptor for allocators
 }
