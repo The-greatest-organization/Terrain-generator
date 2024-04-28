@@ -117,32 +117,56 @@ public:
 
 };
 
+
+struct TerrainParams {
+    uint seed;// [0:UINT_MAX]
+    uint resolution;//limited by performance
+    uint size;//limited by performance
+    uint max_height = 2000;//11000 below sea level + 8000 above sea level = 19000 - earth maximum
+
+
+    uint perlin_iterations = 12;//[0:20]
+    double perlin_intensity = 0.9;//[0:1]
+    double perlin_frequency = 4;//[0:5]
+    double perlin_amplitude = 1;//[0:5]
+
+    uint smoothing_hydraulic_erosion_steps = 10;//[0:100]
+    double smoothing_hydraulic_erosion_sub_intensity = 0.5;//[0:1]
+    double smoothing_hydraulic_erosion_add_intensity = 0.4;//[0:smoothing_hydraulic_erosion_sub_intensity]
+
+    uint real_hydraulic_erosion_steps = 10;//[0:100]
+    double real_hydraulic_erosion_intensity = 0.6;//precipitation per iteration, meters. [0:15] idk
+    double real_hydraulic_erosion_fluidity_of_water = 0.5; //IDK how to call it better, lol. 0-1
+    double real_hydraulic_erosion_soil_flowability = 1;// maybe [0:2], i will think about that one
+    double real_hydraulic_erosion_non_evaporation_of_water = 0.5; //this one is funny too, also [0:1]
+
+    bool cuda = false;
+
+};
+
+
 class Terrain {
-    uint seed;
-    uint resolution;
-    uint size;
+    struct TerrainParamsFreeze : TerrainParams {
+        uint points_size = 0; //size*resolution
 
-    uint perlin_iterations;
-    double perlin_intensity;
-    double perlin_frequency;
-    double perlin_amplitude;
+        TerrainParamsFreeze() : TerrainParams() {}
 
-    uint smoothing_hydraulic_erosion_steps;//*resolution
-    double smoothing_hydraulic_erosion_sub_intensity;
-    double smoothing_hydraulic_erosion_add_intensity;
+        explicit TerrainParamsFreeze(const TerrainParams &other) : TerrainParams::TerrainParams(other) {
+            max_height = max_height * resolution;
+            points_size = size * resolution;
 
-    uint real_hydraulic_erosion_steps;//*resolution
-    double real_hydraulic_erosion_intensity;//meters per iteration
-    double real_hydraulic_erosion_fluidity_of_water; //IDK how to call it better, lol
-    double real_hydraulic_erosion_soil_flowability;
-    double real_hydraulic_erosion_non_evaporation_of_water; //this one is funny too
+            perlin_intensity = 1 / perlin_intensity;
 
+            smoothing_hydraulic_erosion_steps *= resolution;
+            real_hydraulic_erosion_steps *= resolution;
+            real_hydraulic_erosion_intensity *= resolution;
+        }
 
-    bool cuda;
-    static const uint MAX_HEIGHT = 4000; //meters
-    uint max_height_points;
+        TerrainParamsFreeze &operator=(const TerrainParamsFreeze &other) = default;
+    };
 
-    uint hmap_size;
+    TerrainParamsFreeze freezed_params;
+
     uint **hmap = nullptr;
 
     template<typename type>
@@ -162,18 +186,20 @@ class Terrain {
         delete[] map;
     }
 
+    //TODO beautify
     template<typename type>
     void noise_hmap(type **map, type max_height, uint iterations, double intensity, double in_freq, double in_amp,
                     uint map_seed) const {
-        for (uint i = 0; i < hmap_size; i++) {//TODO
-            for (uint j = 0; j < hmap_size; j++) {
+        for (uint i = 0; i < freezed_params.points_size; i++) {//TODO
+            for (uint j = 0; j < freezed_params.points_size; j++) {
                 double x = i, y = j;
-                x /= resolution, y /= resolution;
+                x /= freezed_params.resolution, y /= freezed_params.resolution;
                 double freq = in_freq;
                 double amp = in_amp;
                 double val = 0;
                 for (int k = 0; k < iterations; k++) {//as variable
-                    val += Noise::perlin_noise(x * freq / size + map_seed, y * freq / size + map_seed) * amp;
+                    val += Noise::perlin_noise(x * freq / freezed_params.size + map_seed,
+                                               y * freq / freezed_params.size + map_seed) * amp;
                     freq *= 2;
                     amp /= 2;
                 }
@@ -207,15 +233,15 @@ class Terrain {
                                  {1,  -1},
                                  {0,  -1},
                                  {-1, -1}};
-        for (uint step = 0; step < smoothing_hydraulic_erosion_steps; step++) {
-            for (uint i = 0; i < hmap_size; i++) {
-                for (uint j = 0; j < hmap_size; j++) {
+        for (uint step = 0; step < freezed_params.smoothing_hydraulic_erosion_steps; step++) {
+            for (uint i = 0; i < freezed_params.points_size; i++) {
+                for (uint j = 0; j < freezed_params.points_size; j++) {
                     uint min = hmap[i][j];
                     char lowest_direction = 0;
                     for (char k = 0; k < 9; k++) {
                         uint x = i + directions[k][0];
                         uint y = j + directions[k][1];
-                        if (x == UINT_MAX or x == hmap_size or y == UINT_MAX or y == hmap_size) {
+                        if (x == UINT_MAX or x == freezed_params.points_size or y == UINT_MAX or y == freezed_params.points_size) {
                             continue;
                         }
                         if (min > hmap[x][y]) {
@@ -225,9 +251,9 @@ class Terrain {
                     }
 
                     uint diff = hmap[i][j] - min;
-                    hmap[i][j] -= (uint) (diff * smoothing_hydraulic_erosion_sub_intensity);
+                    hmap[i][j] -= (uint) (diff * freezed_params.smoothing_hydraulic_erosion_sub_intensity);
                     hmap[i + directions[lowest_direction][0]][j + directions[lowest_direction][1]] +=
-                            (uint) (diff * smoothing_hydraulic_erosion_add_intensity);
+                            (uint) (diff * freezed_params.smoothing_hydraulic_erosion_add_intensity);
                 }
             }
         }
@@ -243,22 +269,22 @@ class Terrain {
                                  {0,  -1},
                                  {-1, -1}};
 
-        double m = real_hydraulic_erosion_fluidity_of_water;
-        double n = real_hydraulic_erosion_soil_flowability;
-        double k = pow(resolution, n) * pow(3.1415 / 2, n);
+        double m = freezed_params.real_hydraulic_erosion_fluidity_of_water;
+        double n = freezed_params.real_hydraulic_erosion_soil_flowability;
+        double k = pow(freezed_params.resolution, n) * pow(3.1415 / 2, n);
 
-        SimpleRandom<uint> rnd{seed, 0, 50000};
+        SimpleRandom<uint> rnd{freezed_params.seed, 0, 50000};
         uint water_seed = rnd.next();
-        auto water = new_map<double>(hmap_size);
-        for (uint step = 0; step < real_hydraulic_erosion_steps; step++) {
-            noise_hmap<double>(water, real_hydraulic_erosion_intensity, 15, 1, 1, 1, water_seed);
-            for (uint i = 0; i < hmap_size; i++) {
-                for (uint j = 0; j < hmap_size; j++) {
+        auto water = new_map<double>(freezed_params.points_size);
+        for (uint step = 0; step < freezed_params.real_hydraulic_erosion_steps; step++) {
+            noise_hmap<double>(water, freezed_params.real_hydraulic_erosion_intensity, 15, 1, 1, 1, water_seed);
+            for (uint i = 0; i < freezed_params.points_size; i++) {
+                for (uint j = 0; j < freezed_params.points_size; j++) {
                     std::shuffle(directions[0], directions[7], rnd.gen);//TODO i think it takes too long
                     for (char d = 0; d < 8; d++) {
                         uint x = i + directions[d][0];
                         uint y = j + directions[d][1];
-                        if (x == UINT_MAX or x == hmap_size or y == UINT_MAX or y == hmap_size or
+                        if (x == UINT_MAX or x == freezed_params.points_size or y == UINT_MAX or y == freezed_params.points_size or
                             hmap[i][j] <= hmap[x][y] or water[i][j] == 0) {
                             continue;
                         }//TODO Water should also flow away around the edges
@@ -280,15 +306,15 @@ class Terrain {
                             water[x][y] = all_water;
                             water[i][j] = 0;
                         }
-                        water[x][y] *= real_hydraulic_erosion_non_evaporation_of_water;
-                        water[i][j] *= real_hydraulic_erosion_non_evaporation_of_water;
+                        water[x][y] *= freezed_params.real_hydraulic_erosion_non_evaporation_of_water;
+                        water[i][j] *= freezed_params.real_hydraulic_erosion_non_evaporation_of_water;
                     }
 
 
                 }
             }
         }
-        delete_map(water, hmap_size);
+        delete_map(water, freezed_params.points_size);
     }
 
     void coloring() {
@@ -296,58 +322,27 @@ class Terrain {
     }
 
 public:
-    Terrain(uint size, uint max_height, uint seed, uint resolution = 10,
-            double noise_intensity = 1.2, double noise_frequency = 4,
-            double noise_amplitude = 1, uint noise_iterations = 10,
+    TerrainParams params;
 
-            uint smoothing_hydraulic_erosion_steps = 10, double smoothing_hydraulic_erosion_sub_intensity = 0.5,
-            double smoothing_hydraulic_erosion_add_intensity = 0.4,
-
-            uint real_hydraulic_erosion_steps = 0, double real_hydraulic_erosion_intensity = 1,
-            double real_hydraulic_erosion_fluidity_of_water = 0.8, double real_hydraulic_erosion_soil_flowability = 2,
-            double real_hydraulic_erosion_non_evaporation_of_water = 0.5,
-
-            bool cuda = false) {
-
-        this->resolution = resolution;
-        this->size = size;
-        this->seed = seed;
-
-        this->perlin_iterations = noise_iterations;
-        this->perlin_intensity = 1 / noise_intensity;
-        this->perlin_frequency = noise_frequency;
-        this->perlin_amplitude = noise_amplitude;
-
-        this->smoothing_hydraulic_erosion_steps = smoothing_hydraulic_erosion_steps * resolution;
-        this->smoothing_hydraulic_erosion_sub_intensity = smoothing_hydraulic_erosion_sub_intensity;
-        this->smoothing_hydraulic_erosion_add_intensity = smoothing_hydraulic_erosion_add_intensity;
-
-        this->real_hydraulic_erosion_steps = real_hydraulic_erosion_steps * resolution;
-        this->real_hydraulic_erosion_intensity = real_hydraulic_erosion_intensity * resolution;
-        this->real_hydraulic_erosion_fluidity_of_water = real_hydraulic_erosion_fluidity_of_water;
-        this->real_hydraulic_erosion_soil_flowability = real_hydraulic_erosion_soil_flowability;
-        this->real_hydraulic_erosion_non_evaporation_of_water = real_hydraulic_erosion_non_evaporation_of_water;
-
-
-        this->max_height_points = max_height * resolution;
-        this->hmap_size = size * resolution;
-
-        this->cuda = cuda;
-
-
+    explicit Terrain(TerrainParams &in_params) {
+        params = in_params;
     }
 
     ~Terrain() {
-        delete_map(hmap, hmap_size);
+        delete_map(hmap, freezed_params.points_size);
     }
 
     void generate() {
+        freezed_params = TerrainParamsFreeze(params);
+
         if (hmap == nullptr) {
-            hmap = new_map<uint>(hmap_size);
+            hmap = new_map<uint>(freezed_params.points_size);
         }
-        noise_hmap<uint>(hmap, max_height_points, perlin_iterations, perlin_intensity, perlin_frequency,
-                         perlin_amplitude,
-                         seed);
+        noise_hmap<uint>(hmap, freezed_params.max_height, freezed_params.perlin_iterations,
+                         freezed_params.perlin_intensity,
+                         freezed_params.perlin_frequency,
+                         freezed_params.perlin_amplitude,
+                         freezed_params.seed);
         asteroids();
         real_hydraulic_erosion();
         smoothing_hydraulic_erosion();
@@ -355,43 +350,47 @@ public:
     }
 
     void load_png(const std::string &filename) {
-        hmap = new_map<uint>(hmap_size);
+        hmap = new_map<uint>(freezed_params.points_size);
 
         int width;
         int height;
         int comp;
         unsigned char *image = stbi_load(filename.c_str(), &width, &height, &comp, 1);
-        if (height != width or width != hmap_size) {
+        if (height != width or width != freezed_params.points_size) {
             throw std::runtime_error("Wrong image size");
         }
 
         for (uint i = 0; i < width; i++) {
             for (uint j = 0; j < width; j++) {
-                hmap[i][j] = image[i * hmap_size + j] / CHAR_MAX * max_height_points;
+                hmap[i][j] = image[i * freezed_params.points_size + j] / CHAR_MAX * freezed_params.max_height;
             }
         }
+    }
+
+    bool export_file(bool force= false){
+
     }
 
     void export_png(const std::string &filename = "result.png") {
-        if (hmap_size > INT_MAX) {
+        if (freezed_params.points_size > INT_MAX) {
             throw std::range_error("Map size is too big");
         }
-        auto out = new char[hmap_size * hmap_size];
-        double k = (double) max_height_points / CHAR_MAX;
-        for (uint i = 0; i < hmap_size; i++) {
-            for (uint j = 0; j < hmap_size; j++) {
-                out[i * hmap_size + j] = (char) (hmap[i][j] / k);
+        auto out = new char[freezed_params.points_size * freezed_params.points_size];
+        double k = (double) freezed_params.max_height / CHAR_MAX;
+        for (uint i = 0; i < freezed_params.points_size; i++) {
+            for (uint j = 0; j < freezed_params.points_size; j++) {
+                out[i * freezed_params.points_size + j] = (char) (hmap[i][j] / k);
             }
         }
 
-        stbi_write_png(filename.c_str(), (int) hmap_size, (int) hmap_size,
-                       1, out, (int) hmap_size * 1);
+        stbi_write_png(filename.c_str(), (int) freezed_params.points_size, (int) freezed_params.points_size,
+                       1, out, (int) freezed_params.points_size * 1);
     }
 
     void cout_map() {//TODO fix before use
-        double k = (double) max_height_points / 24;
-        for (uint i = 0; i < hmap_size; i++) {
-            for (uint j = 0; j < hmap_size; j++) {
+        double k = (double) freezed_params.max_height / 24;
+        for (uint i = 0; i < freezed_params.points_size; i++) {
+            for (uint j = 0; j < freezed_params.points_size; j++) {
                 std::cout << (j == 0 ? "\n" : "") << "\033[38;5;" << 231 + (hmap[i][j] / k) << "m" << "█";
 
             }
