@@ -7,3 +7,6 @@
 [submodule "External/google_test"]
 	path = External/google_test
 	url = https://github.com/google/googletest.git
+[submodule "CMake_External/sanitizers"]
+	path = CMake_External/sanitizers
+	url = https://github.com/arsenm/sanitizers-cmake.git

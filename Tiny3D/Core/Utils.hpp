@@ -37,8 +37,8 @@ namespace tiny3d {
     using isize = std::ptrdiff_t;
     using usize = std::size_t;
 
-    using real32 = std::float_t;
-    using real64 = std::double_t;
+    using real32 = float;
+    using real64 = double;
 
     using std::string;
     using input_sstream = std::istringstream;
