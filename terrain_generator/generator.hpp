@@ -367,7 +367,7 @@ public:
         }
     }
 
-    bool export_file(bool force= false){
+    char export_file(std::string path, bool force= false){//status codes 0-OK, 1-BAD PATH, 2-NOT GENERATED, 3- NOT ACTUAL PARAMS, use force==true
 
     }
 
