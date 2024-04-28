@@ -4,14 +4,30 @@
 #include "Utils.hpp"
 #include "Math.hpp"
 
+/// @todo: write some exceptions here
+
+namespace tiny3d::errors {};
+
 namespace tiny3d {
-    class Shader {};
+    class Shader {
+        // TODO: shader source here, virtual method 'compile'
+    };
 
-    class VertexShader : public Shader {};
-    class GeometryShader : public Shader {};
-    class FragmentShader : public Shader {};
+    class VertexShader : public Shader {
+        // TODO: implementing virtual methods compile
+    };
 
-    class ShaderProgram {};
+    class GeometryShader : public Shader {
+        // TODO: implementing virtual methods compile
+    };
+
+    class FragmentShader : public Shader {
+        // TODO: implementing virtual methods compile
+    };
+
+    class ShaderProgram {
+        // TODO: method 'link & validate'
+    };
 
     enum class TextureFilter : usize {
         Linear,
@@ -53,4 +69,4 @@ namespace tiny3d {
     class UniformBuffer {};
 
     class RenderTarget {};
-}
+};
