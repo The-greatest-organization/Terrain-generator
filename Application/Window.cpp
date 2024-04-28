@@ -15,8 +15,8 @@
 namespace TerrainGenerator {
     static std::minstd_rand generator;
     static bool GLFWInitialized = false;
-    static Int32 resolution = 15;
-    static Int32 size = 20;
+    static Int32 resolution = 1;
+    static Int32 size = 400;
     static Int32 seed = generator();
     static const char *biomes[]{"Plain", "Mountains", "Desert", "Sea"};
     static const Int32 countBiomes = 4;
@@ -40,10 +40,17 @@ namespace TerrainGenerator {
     static bool cuda = false;
     static bool run = false;
 
+    static Int32 maxSize = 500;
+    static Int32 maxResolution = 10;
+
     int previewWidth = 0;
     int previewHeight = 0;
     GLuint previewTexture = 0;
     bool retLoadPreview = false;
+
+    int previewUpdateWidth = 0;
+    int previewUpdateHeight = 0;
+    GLuint previewUpdateTexture = 0;
 
     bool isChange = true;
 
@@ -94,6 +101,7 @@ namespace TerrainGenerator {
             EventWindowClose event;
             data.eventCallbackFn(event);
         });
+
         return 0;
     }
 
@@ -137,12 +145,15 @@ namespace TerrainGenerator {
 
     void loadPreview() {
         Terrain tr = Terrain(
-                size, maxHeight, seed, resolution, intensityTerrain, frequencyTerrain,
+                400, maxHeight, seed, 1, intensityTerrain, frequencyTerrain,
                 amplitudeTerrain, stepsTerrain, stepsHydraulic, subIntensityHydraulic,
                 addIntensityHydraulic, stepsRealHydraulic, intensityRealHydraulic,
                 fluidityRealHydraulic, flowabilityRealHydraulic,
                 evaporationRealHydraulic, cuda);
         tr.generate();
+
+        /// TODO: get the pixels from generator directly to avoid working with files
+
         tr.export_png("preview.png");
         retLoadPreview = LoadTextureFromFile("preview.png", &previewTexture,
                                              &previewWidth, &previewHeight);
@@ -152,16 +163,26 @@ namespace TerrainGenerator {
     void showPreview(Float32 windowWidth, Float32 windowHeight) {
         ImGui::BeginChild("Preview", {windowWidth / 4, windowHeight * 1.5f / 4},
                           true);
+        float posY = ImGui::GetCursorPosY();
+        float posX = ImGui::GetCursorPosX();
         ImGui::SeparatorText("Preview:");
+        //ImGui::SetCursorPos({windowWidth / 4 * 3.5 / 4, posY});
         if (isChange) {
-            isChange = false;
-            loadPreview();
-        }
-        if (!retLoadPreview) {
-            ImGui::Text("no image");
+            float posY = ImGui::GetCursorPosY() + windowHeight * 1.5f / 4 / 3;
+            ImGui::SetCursorPos({ImGui::GetCursorPosX() + windowWidth / 4 / 3, posY});
+            ImGui::SetCursorPosY(posY);
+            ImGui::Text("Preview was modified");
+            if (ImGui::Button("Update", {100, 50})) {
+                isChange = false;
+                loadPreview();
+            }
         } else {
-            ImGui::Image((void *) (intptr_t) previewTexture,
-                         ImVec2(previewWidth, previewHeight));
+            if (!retLoadPreview) {
+                ImGui::Text("no image");
+            } else {
+                ImGui::Image((void *) (intptr_t) previewTexture,
+                             ImVec2(previewWidth, previewHeight));
+            }
         }
         ImGui::EndChild();
     }
@@ -172,8 +193,8 @@ namespace TerrainGenerator {
 
         ImGui::SeparatorText("Main settings:");
         isChange = ImGui::InputInt("Seed", &seed) || isChange;
-        isChange = ImGui::SliderInt("Resolution", &resolution, 0, 100) || isChange;
-        isChange = ImGui::SliderInt("Size", &size, 0, 100) || isChange;
+        ImGui::SliderInt("Resolution", &resolution, 1, maxResolution);
+        ImGui::SliderInt("Size", &size, 1, maxSize);
         ImGui::SeparatorText("Terrain formation:");
         isChange = ImGui::SliderFloat("Intensity", &intensityTerrain, 0, 2) || isChange;
         isChange = ImGui::SliderFloat("Frequency", &frequencyTerrain, 0, 10) || isChange;
