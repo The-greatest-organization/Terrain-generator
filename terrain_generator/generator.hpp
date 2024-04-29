@@ -1,6 +1,7 @@
 #ifndef generator_h
 #define generator_h
 
+#include <fstream>
 #include "algorithm"
 #include "random"
 #include "iostream"
@@ -117,7 +118,6 @@ public:
 
 };
 
-
 struct TerrainParams {
     uint seed;// [0:UINT_MAX]
     uint resolution;//limited by performance
@@ -142,6 +142,26 @@ struct TerrainParams {
 
     bool cuda = false;
 
+    bool operator==(TerrainParams &other) {
+        return (memcmp(&seed, &other.seed, sizeof(TerrainParams)) == 0);
+//        return (seed == other.seed && resolution == other.resolution && size == other.size &&
+//                max_height == other.max_height && perlin_intensity == other.perlin_intensity &&
+//                perlin_frequency == other.perlin_frequency && perlin_amplitude == other.perlin_amplitude &&
+//                smoothing_hydraulic_erosion_steps == other.smoothing_hydraulic_erosion_steps &&
+//                smoothing_hydraulic_erosion_add_intensity == other.smoothing_hydraulic_erosion_add_intensity &&
+//                smoothing_hydraulic_erosion_sub_intensity == other.smoothing_hydraulic_erosion_sub_intensity &&
+//                real_hydraulic_erosion_steps == other.real_hydraulic_erosion_steps &&
+//                real_hydraulic_erosion_intensity == other.real_hydraulic_erosion_intensity &&
+//                real_hydraulic_erosion_non_evaporation_of_water ==
+//                other.real_hydraulic_erosion_non_evaporation_of_water &&
+//                real_hydraulic_erosion_fluidity_of_water == other.real_hydraulic_erosion_fluidity_of_water &&
+//                real_hydraulic_erosion_soil_flowability == other.real_hydraulic_erosion_soil_flowability);
+    }
+
+
+    bool operator!=(TerrainParams &other) {
+        return !this->operator==(other);
+    }
 };
 
 
@@ -152,6 +172,11 @@ class Terrain {
         TerrainParamsFreeze() : TerrainParams() {}
 
         explicit TerrainParamsFreeze(const TerrainParams &other) : TerrainParams::TerrainParams(other) {
+            calculate();
+
+        }
+
+        void calculate() {
             max_height = max_height * resolution;
             points_size = size * resolution;
 
@@ -165,7 +190,9 @@ class Terrain {
         TerrainParamsFreeze &operator=(const TerrainParamsFreeze &other) = default;
     };
 
-    TerrainParamsFreeze freezed_params;
+    const std::string FILE_HEADER = "TERRAIN";
+
+    TerrainParamsFreeze frozen_params;
 
     uint **hmap = nullptr;
 
@@ -180,6 +207,9 @@ class Terrain {
 
     template<typename type>
     void delete_map(type **map, uint map_size) {
+        if (map == nullptr) {
+            return;
+        }
         for (uint i = 0; i < map_size; i++) {
             delete[] map[i];
         }
@@ -190,16 +220,16 @@ class Terrain {
     template<typename type>
     void noise_hmap(type **map, type max_height, uint iterations, double intensity, double in_freq, double in_amp,
                     uint map_seed) const {
-        for (uint i = 0; i < freezed_params.points_size; i++) {//TODO
-            for (uint j = 0; j < freezed_params.points_size; j++) {
+        for (uint i = 0; i < frozen_params.points_size; i++) {
+            for (uint j = 0; j < frozen_params.points_size; j++) {
                 double x = i, y = j;
-                x /= freezed_params.resolution, y /= freezed_params.resolution;
+                x /= frozen_params.resolution, y /= frozen_params.resolution;
                 double freq = in_freq;
                 double amp = in_amp;
                 double val = 0;
                 for (int k = 0; k < iterations; k++) {//as variable
-                    val += Noise::perlin_noise(x * freq / freezed_params.size + map_seed,
-                                               y * freq / freezed_params.size + map_seed) * amp;
+                    val += Noise::perlin_noise(x * freq / frozen_params.size + map_seed,
+                                               y * freq / frozen_params.size + map_seed) * amp;
                     freq *= 2;
                     amp /= 2;
                 }
@@ -233,15 +263,16 @@ class Terrain {
                                  {1,  -1},
                                  {0,  -1},
                                  {-1, -1}};
-        for (uint step = 0; step < freezed_params.smoothing_hydraulic_erosion_steps; step++) {
-            for (uint i = 0; i < freezed_params.points_size; i++) {
-                for (uint j = 0; j < freezed_params.points_size; j++) {
+        for (uint step = 0; step < frozen_params.smoothing_hydraulic_erosion_steps; step++) {
+            for (uint i = 0; i < frozen_params.points_size; i++) {
+                for (uint j = 0; j < frozen_params.points_size; j++) {
                     uint min = hmap[i][j];
                     char lowest_direction = 0;
                     for (char k = 0; k < 9; k++) {
                         uint x = i + directions[k][0];
                         uint y = j + directions[k][1];
-                        if (x == UINT_MAX or x == freezed_params.points_size or y == UINT_MAX or y == freezed_params.points_size) {
+                        if (x == UINT_MAX or x == frozen_params.points_size or y == UINT_MAX or
+                            y == frozen_params.points_size) {
                             continue;
                         }
                         if (min > hmap[x][y]) {
@@ -251,9 +282,9 @@ class Terrain {
                     }
 
                     uint diff = hmap[i][j] - min;
-                    hmap[i][j] -= (uint) (diff * freezed_params.smoothing_hydraulic_erosion_sub_intensity);
+                    hmap[i][j] -= (uint) (diff * frozen_params.smoothing_hydraulic_erosion_sub_intensity);
                     hmap[i + directions[lowest_direction][0]][j + directions[lowest_direction][1]] +=
-                            (uint) (diff * freezed_params.smoothing_hydraulic_erosion_add_intensity);
+                            (uint) (diff * frozen_params.smoothing_hydraulic_erosion_add_intensity);
                 }
             }
         }
@@ -269,22 +300,23 @@ class Terrain {
                                  {0,  -1},
                                  {-1, -1}};
 
-        double m = freezed_params.real_hydraulic_erosion_fluidity_of_water;
-        double n = freezed_params.real_hydraulic_erosion_soil_flowability;
-        double k = pow(freezed_params.resolution, n) * pow(3.1415 / 2, n);
+        double m = frozen_params.real_hydraulic_erosion_fluidity_of_water;
+        double n = frozen_params.real_hydraulic_erosion_soil_flowability;
+        double k = pow(frozen_params.resolution, n) * pow(3.1415 / 2, n);
 
-        SimpleRandom<uint> rnd{freezed_params.seed, 0, 50000};
+        SimpleRandom<uint> rnd{frozen_params.seed, 0, 50000};
         uint water_seed = rnd.next();
-        auto water = new_map<double>(freezed_params.points_size);
-        for (uint step = 0; step < freezed_params.real_hydraulic_erosion_steps; step++) {
-            noise_hmap<double>(water, freezed_params.real_hydraulic_erosion_intensity, 15, 1, 1, 1, water_seed);
-            for (uint i = 0; i < freezed_params.points_size; i++) {
-                for (uint j = 0; j < freezed_params.points_size; j++) {
+        auto water = new_map<double>(frozen_params.points_size);
+        for (uint step = 0; step < frozen_params.real_hydraulic_erosion_steps; step++) {
+            noise_hmap<double>(water, frozen_params.real_hydraulic_erosion_intensity, 15, 1, 1, 1, water_seed);
+            for (uint i = 0; i < frozen_params.points_size; i++) {
+                for (uint j = 0; j < frozen_params.points_size; j++) {
                     std::shuffle(directions[0], directions[7], rnd.gen);//TODO i think it takes too long
                     for (char d = 0; d < 8; d++) {
                         uint x = i + directions[d][0];
                         uint y = j + directions[d][1];
-                        if (x == UINT_MAX or x == freezed_params.points_size or y == UINT_MAX or y == freezed_params.points_size or
+                        if (x == UINT_MAX or x == frozen_params.points_size or y == UINT_MAX or
+                            y == frozen_params.points_size or
                             hmap[i][j] <= hmap[x][y] or water[i][j] == 0) {
                             continue;
                         }//TODO Water should also flow away around the edges
@@ -306,15 +338,15 @@ class Terrain {
                             water[x][y] = all_water;
                             water[i][j] = 0;
                         }
-                        water[x][y] *= freezed_params.real_hydraulic_erosion_non_evaporation_of_water;
-                        water[i][j] *= freezed_params.real_hydraulic_erosion_non_evaporation_of_water;
+                        water[x][y] *= frozen_params.real_hydraulic_erosion_non_evaporation_of_water;
+                        water[i][j] *= frozen_params.real_hydraulic_erosion_non_evaporation_of_water;
                     }
 
 
                 }
             }
         }
-        delete_map(water, freezed_params.points_size);
+        delete_map(water, frozen_params.points_size);
     }
 
     void coloring() {
@@ -324,25 +356,27 @@ class Terrain {
 public:
     TerrainParams params;
 
+    Terrain() = default;
+
     explicit Terrain(TerrainParams &in_params) {
         params = in_params;
     }
 
     ~Terrain() {
-        delete_map(hmap, freezed_params.points_size);
+        delete_map(hmap, frozen_params.points_size);
     }
 
     void generate() {
-        freezed_params = TerrainParamsFreeze(params);
+        frozen_params = TerrainParamsFreeze(params);
 
         if (hmap == nullptr) {
-            hmap = new_map<uint>(freezed_params.points_size);
+            hmap = new_map<uint>(frozen_params.points_size);
         }
-        noise_hmap<uint>(hmap, freezed_params.max_height, freezed_params.perlin_iterations,
-                         freezed_params.perlin_intensity,
-                         freezed_params.perlin_frequency,
-                         freezed_params.perlin_amplitude,
-                         freezed_params.seed);
+        noise_hmap<uint>(hmap, frozen_params.max_height, frozen_params.perlin_iterations,
+                         frozen_params.perlin_intensity,
+                         frozen_params.perlin_frequency,
+                         frozen_params.perlin_amplitude,
+                         frozen_params.seed);
         asteroids();
         real_hydraulic_erosion();
         smoothing_hydraulic_erosion();
@@ -350,47 +384,87 @@ public:
     }
 
     void load_png(const std::string &filename) {
-        hmap = new_map<uint>(freezed_params.points_size);
+        hmap = new_map<uint>(frozen_params.points_size);
 
         int width;
         int height;
         int comp;
         unsigned char *image = stbi_load(filename.c_str(), &width, &height, &comp, 1);
-        if (height != width or width != freezed_params.points_size) {
+        if (height != width or width != frozen_params.points_size) {
             throw std::runtime_error("Wrong image size");
         }
 
         for (uint i = 0; i < width; i++) {
             for (uint j = 0; j < width; j++) {
-                hmap[i][j] = image[i * freezed_params.points_size + j] / CHAR_MAX * freezed_params.max_height;
+                hmap[i][j] = image[i * frozen_params.points_size + j] / CHAR_MAX * frozen_params.max_height;
             }
         }
     }
 
-    char export_file(std::string path, bool force= false){//status codes 0-OK, 1-BAD PATH, 2-NOT GENERATED, 3- NOT ACTUAL PARAMS, use force==true
+    char export_file(const std::string &path,
+                     bool force = false) {//status codes 0-OK, 1-BAD PATH, 2-NOT GENERATED, 3- NOT ACTUAL PARAMS, use force==true
+        if (hmap == nullptr) {
+            return 2;
+        }
+        if (static_cast<TerrainParams>(frozen_params) != params && !force) {
+            return 3;
+        }
+        std::fstream file(path.c_str(), std::ios::out | std::ios::binary);
+        if (!file.is_open()) {
+            return 1;
+        }
 
+        file << 'T';
+        file.write(reinterpret_cast<const char *>(&frozen_params), sizeof(frozen_params));
+        for (uint i = 0; i < frozen_params.points_size; i++) {
+            file.write(reinterpret_cast<const char *>(hmap[i]), frozen_params.points_size * sizeof(uint));
+        }
+        file.close();
+        return 0;
+    }
+
+    char import_file(const std::string &path) {//status codes 0-OK, 1-BAD PATH, 2-BAD FILE
+        std::fstream file(path.c_str(), std::ios::in | std::ios::binary);
+        if (!file.is_open()) {
+            return 1;
+        }
+        char header;
+        file >> header;
+
+        if (header != 'T') {
+            return 2;
+        }
+
+        delete_map(hmap, frozen_params.points_size);
+        file.read(reinterpret_cast<char *>(&frozen_params), sizeof(frozen_params));
+        frozen_params.calculate();
+        hmap = new_map<uint>(frozen_params.points_size);
+        for (uint i = 0; i < frozen_params.points_size; i++) {
+            file.read(reinterpret_cast<char *>(hmap[i]), frozen_params.points_size * sizeof(uint));
+        }
+        return 0;
     }
 
     void export_png(const std::string &filename = "result.png") {
-        if (freezed_params.points_size > INT_MAX) {
+        if (frozen_params.points_size > INT_MAX) {
             throw std::range_error("Map size is too big");
         }
-        auto out = new char[freezed_params.points_size * freezed_params.points_size];
-        double k = (double) freezed_params.max_height / CHAR_MAX;
-        for (uint i = 0; i < freezed_params.points_size; i++) {
-            for (uint j = 0; j < freezed_params.points_size; j++) {
-                out[i * freezed_params.points_size + j] = (char) (hmap[i][j] / k);
+        auto out = new char[frozen_params.points_size * frozen_params.points_size];
+        double k = (double) frozen_params.max_height / CHAR_MAX;
+        for (uint i = 0; i < frozen_params.points_size; i++) {
+            for (uint j = 0; j < frozen_params.points_size; j++) {
+                out[i * frozen_params.points_size + j] = (char) (hmap[i][j] / k);
             }
         }
 
-        stbi_write_png(filename.c_str(), (int) freezed_params.points_size, (int) freezed_params.points_size,
-                       1, out, (int) freezed_params.points_size * 1);
+        stbi_write_png(filename.c_str(), (int) frozen_params.points_size, (int) frozen_params.points_size,
+                       1, out, (int) frozen_params.points_size * 1);
     }
 
     void cout_map() {//TODO fix before use
-        double k = (double) freezed_params.max_height / 24;
-        for (uint i = 0; i < freezed_params.points_size; i++) {
-            for (uint j = 0; j < freezed_params.points_size; j++) {
+        double k = (double) frozen_params.max_height / 24;
+        for (uint i = 0; i < frozen_params.points_size; i++) {
+            for (uint j = 0; j < frozen_params.points_size; j++) {
                 std::cout << (j == 0 ? "\n" : "") << "\033[38;5;" << 231 + (hmap[i][j] / k) << "m" << "█";
 
             }
