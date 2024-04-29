@@ -3,70 +3,45 @@
 
 #include "Utils.hpp"
 #include "Math.hpp"
+#include <GLFW/glfw3.h>
 
-/// @todo: write some exceptions here
+/// @todo: write some exceptions here (opengl errors especially)
 
 namespace tiny3d::errors {};
 
 namespace tiny3d {
-    class Shader {
-        // TODO: shader source here, virtual method 'compile'
-    };
-
-    class VertexShader : public Shader {
-        // TODO: implementing virtual methods compile
-    };
-
-    class GeometryShader : public Shader {
-        // TODO: implementing virtual methods compile
-    };
-
-    class FragmentShader : public Shader {
-        // TODO: implementing virtual methods compile
-    };
-
-    class ShaderProgram {
-        // TODO: method 'link & validate'
-    };
-
-    enum class TextureFilter : usize {
-        Linear,
-        Nearest,
-    };
-
-    enum class TextureAddressMode : usize {
-        Repeat,
-        MirrorRepeat,
-        Clamp,
-        Border,
-    };
-
-    struct TextureParams {
-        TextureAddressMode addressMode = TextureAddressMode::Border;
-        TextureFilter minFilter = TextureFilter::Nearest;
-        TextureFilter magFilter = TextureFilter::Nearest;
-
-        real32 maxAnitrosopy = 0.0f;
-
-        real32 minLOD = -1000;
-        real32 maxLOD = 1000;
-        real32 lodBias = 0;
+    enum class Topologies : GLenum {
+        Points = GL_POINTS,
+        Lines = GL_LINES,
+        LineLoops = GL_LINE_LOOP,
+        LineStrips = GL_LINE_STRIP,
+        Triangles = GL_TRIANGLES,
     };
 
     class Texture1D {};
+
     class Texture2D {};
+
     class Texture3D {};
-    class TextureCubemap {};
 
-    enum class BufferUsage : usize {
-        StaticUsage,
-        StreamUsage,
-        DynamicUsage,
+    template <std::destructible T>
+    class VertexBuffer {
+        VertexBuffer() = delete;
+        
+        VertexBuffer(const VertexBuffer<T>& buffer);
+        VertexBuffer(VertexBuffer<T>&& buffer);
+        
+        VertexBuffer(std::initializer_list<T> vertices);
+        VertexBuffer(const std::vector<T>& vertices);
+
+        VertexBuffer<T>& operator=(const VertexBuffer<T>& buffer);
+        VertexBuffer<T>& operator=(VertexBuffer<T>&& buffer);
+
+        inline T* Data() const noexcept {
+            return vertices_;
+        }
+
+        private:
+        T* vertices_;
     };
-
-    class VertexBuffer {};
-    class IndexBuffer {};
-    class UniformBuffer {};
-
-    class RenderTarget {};
 };

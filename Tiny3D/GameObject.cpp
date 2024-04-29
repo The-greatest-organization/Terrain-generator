@@ -19,16 +19,19 @@ namespace tiny3d::errors {
 namespace tiny3d {
     ObjectComponent::ObjectComponent(const std::string& name) : name_(name) {}
 
-    GameObject::GameObject(const std::string& name) : name_(name) {}
+    GameObject::GameObject(const std::string& name, const std::string& type) : name_(name), type_(type) {}
 
-    GameObject::GameObject(const std::string& name, std::initializer_list<ObjectComponent*> components) : name_(name) {
+    GameObject::GameObject(const std::string& name, const std::string& type, std::initializer_list<ObjectComponent*> components) {
+        name_ = name;
+        type_ = type;
+
         for (auto&& i : components) {
             assert(i != nullptr);
             components_.emplace(i->Name(), i->Copy());
         }
     }
 
-    GameObject::GameObject(const GameObject& object) {
+    GameObject::GameObject(const GameObject& object) : name_(object.name_), type_(object.type_) {
         for (auto&& i : object.components_) {
             assert(i.second != nullptr);
             components_.emplace(i.first, i.second->Copy());
@@ -59,6 +62,11 @@ namespace tiny3d {
         }
 
         components_.emplace(component->Name(), component);
+    }
+
+    void GameObject::AttachComponents(std::initializer_list<ObjectComponent*> components) {
+        for (ObjectComponent* i : components)
+            AttachComponent(i);
     }
 
     ObjectComponent* GameObject::DetachComponent(const std::string& name) {

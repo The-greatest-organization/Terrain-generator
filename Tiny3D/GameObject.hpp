@@ -58,7 +58,7 @@ namespace tiny3d {
 
         ObjectComponentT() = delete;
         ObjectComponentT(const ObjectComponentT& component) : ObjectComponent(component.Name()), data_(component.data_) {}
-        ObjectComponentT(ObjectComponentT&& component) : data_(std::move(component.data_)) {}
+        ObjectComponentT(ObjectComponentT&& component) : ObjectComponent(std::move(component.Name())), data_(std::move(component.data_)) {}
 
         template <typename... Args>
         ObjectComponentT(const std::string& name, Args&&... args) : ObjectComponent(name), data_(std::forward<Args>(args)...) {}
@@ -83,41 +83,13 @@ namespace tiny3d {
         T data_;
     };
 
-    class Translation2D : public ObjectComponentT<glm::vec2> {
-        public:
-        using ObjectComponentT<glm::vec2>::ObjectComponentT;
-        glm::mat3 CalculateMatrix() const noexcept;
-    };
+    using Translation2D = ObjectComponentT<glm::vec2>;
+    using Rotation2D = ObjectComponentT<glm::vec2>;
+    using Scale2D = ObjectComponentT<glm::vec2>;
 
-    class Rotation2D : public ObjectComponentT<glm::vec2> {
-        public:
-        using ObjectComponentT<glm::vec2>::ObjectComponentT;
-        glm::mat3 CalculateMatrix() const noexcept;
-    };
-
-    class Scale2D : public ObjectComponentT<glm::vec2> {
-        public:
-        using ObjectComponentT<glm::vec2>::ObjectComponentT;
-        glm::mat3 CalculateMatrix() const noexcept;
-    };
-
-    class Translation3D : public ObjectComponentT<glm::vec4> {
-        public:
-        using ObjectComponentT<glm::vec4>::ObjectComponentT;
-        glm::mat3 CalculateMatrix() const noexcept;
-    };
-
-    class Rotation3D : public ObjectComponentT<glm::vec4> {
-        public:
-        using ObjectComponentT<glm::vec4>::ObjectComponentT;
-        glm::mat3 CalculateMatrix() const noexcept;
-    };
-
-    class Scale3D : public ObjectComponentT<glm::vec4> {
-        public:
-        using ObjectComponentT<glm::vec4>::ObjectComponentT;
-        glm::mat3 CalculateMatrix() const noexcept;
-    };
+    using Translation3D = ObjectComponentT<glm::vec4>;
+    using Rotation3D = ObjectComponentT<glm::vec4>;
+    using Scale3D = ObjectComponentT<glm::vec4>;
 
     /// @todo implement graphics components
 
@@ -133,14 +105,13 @@ namespace tiny3d {
 
     class GameObject {
         public:
-        /// @todo Rule of 5
         GameObject() = delete;
 
         GameObject(const GameObject& object);
         GameObject(GameObject&& object) = default;
 
-        GameObject(const std::string& name);
-        GameObject(const std::string& name, std::initializer_list<ObjectComponent*> components);
+        GameObject(const std::string& name, const std::string& type);
+        GameObject(const std::string& name, const std::string& type, std::initializer_list<ObjectComponent*> components);
 
         ~GameObject();
 
@@ -148,6 +119,8 @@ namespace tiny3d {
         GameObject& operator=(GameObject&& object) = default;
 
         void AttachComponent(ObjectComponent* component);
+        void AttachComponents(std::initializer_list<ObjectComponent*> components);
+
         ObjectComponent* DetachComponent(const std::string& name);
 
         template <typename T>
@@ -170,8 +143,13 @@ namespace tiny3d {
             return name_;   
         }
 
+        inline const std::string& Type() const noexcept {
+            return type_;
+        }
+
         protected:
         std::unordered_map<std::string, ObjectComponent*> components_{10};
         std::string name_;
+        std::string type_;
     };
 }

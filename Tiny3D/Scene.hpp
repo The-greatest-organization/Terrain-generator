@@ -1,13 +1,15 @@
+// by andrew.la
 #pragma once
 
 #include "Core/Utils.hpp"
 #include "GameObject.hpp"
+#include "Render.hpp"
 
 #include <map>
 
 namespace tiny3d::errors {
-    struct SceneNodeNotFound : std::exception {};
-    struct SceneNodeAlreadyExists : std::exception {};
+    struct NodeNotFound : std::exception {};
+    struct NodeAlreadyExists : std::exception {};
 }
 
 namespace tiny3d {
@@ -21,6 +23,8 @@ namespace tiny3d {
 
         ~SceneNode();
 
+        inline bool& Visible();
+
         inline operator GameObject*() {
             return object_;
         }
@@ -28,14 +32,20 @@ namespace tiny3d {
         friend class Scene;
 
         private:
-
         void AddChild(SceneNode* another);
+        void AddChild(GameObject* object);
+
         SceneNode* RemoveChild(const std::string& name);
 
         SceneNode* GetChild(const std::string& name);
 
         std::unordered_map<std::string, SceneNode*> children_;
+        
         GameObject* object_;
+
+        bool visible_;
+
+        std::string type_;
     };
 
     class Scene {
@@ -46,5 +56,7 @@ namespace tiny3d {
 
         private:
         std::unordered_map<std::string, SceneNode*> objects_{10};
+
+        Renderer* renderer_;
     };
 }

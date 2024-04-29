@@ -11,6 +11,6 @@
 #include <glm/mat4x4.hpp>
 
 namespace tiny3d {
-    const real32 PI32 = 3.141592f;
-    const real64 PI64 = 3.14159265359;
+    static const real32 PI32 = 3.141592f;
+    static const real64 PI64 = 3.14159265359;
 }
