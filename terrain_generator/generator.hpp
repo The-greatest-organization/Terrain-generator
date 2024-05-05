@@ -120,21 +120,21 @@ public:
 
 struct TerrainParams {
     uint seed;// [0:UINT_MAX]
-    uint resolution;//limited by performance
-    uint size;//limited by performance
-    uint max_height = 2000;//11000 below sea level + 8000 above sea level = 19000 - earth maximum
+    int resolution;//limited by performance
+    int size;//limited by performance
+    int max_height = 2000;//11000 below sea level + 8000 above sea level = 19000 - earth maximum
 
 
-    uint perlin_iterations = 12;//[0:20]
+    int perlin_iterations = 12;//[0:20]
     double perlin_intensity = 0.9;//[0:1]
     double perlin_frequency = 4;//[0:5]
     double perlin_amplitude = 1;//[0:5]
 
-    uint smoothing_hydraulic_erosion_steps = 10;//[0:100]
+    int smoothing_hydraulic_erosion_steps = 10;//[0:100]
     double smoothing_hydraulic_erosion_sub_intensity = 0.5;//[0:1]
     double smoothing_hydraulic_erosion_add_intensity = 0.4;//[0:smoothing_hydraulic_erosion_sub_intensity]
 
-    uint real_hydraulic_erosion_steps = 10;//[0:100]
+    int real_hydraulic_erosion_steps = 10;//[0:100]
     double real_hydraulic_erosion_intensity = 0.6;//precipitation per iteration, meters. [0:15] idk
     double real_hydraulic_erosion_fluidity_of_water = 0.5; //IDK how to call it better, lol. 0-1
     double real_hydraulic_erosion_soil_flowability = 1;// maybe [0:2], i will think about that one

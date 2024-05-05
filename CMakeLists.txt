@@ -4,20 +4,23 @@ project(TerrainGenerator)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_C_STANDARD 11)
 
-include_directories(${PROJECT_SOURCE_DIR}/deps/include)
-link_directories(${PROJECT_SOURCE_DIR}/deps/libs)
+#include_directories(${PROJECT_SOURCE_DIR}/deps/include)
+#link_directories(${PROJECT_SOURCE_DIR}/deps/libs)
 
 add_executable(release Application/Main.cpp
         Application/Application.cpp
         Application/Window.cpp)
 
-if (CMAKE_SYSTEM_NAME EQUAL "Windows")
-    target_link_libraries(release glfw3 opengl32 gdi32)
-endif ()
+#if (CMAKE_SYSTEM_NAME EQUAL "Windows")
+#    target_link_libraries(release glfw3 opengl32 gdi32)
+#endif ()
+#
+#if (CMAKE_SYSTEM_NAME EQUAL "Linux")
+#    target_link_libraries(release glfw3 GL)
+#endif ()
 
-if (CMAKE_SYSTEM_NAME EQUAL "Linux")
-    target_link_libraries(release glfw3 GL)
-endif ()
+add_subdirectory(external/glfw ${CMAKE_CURRENT_BINARY_DIR}/glfw)
+target_link_libraries(release PRIVATE glfw)
 
 add_subdirectory(external/glad ${CMAKE_CURRENT_BINARY_DIR}/glad)
 target_link_libraries(release PRIVATE glad)
@@ -45,6 +48,6 @@ add_library(ImGui STATIC
 
 target_include_directories(ImGui PUBLIC external)
 target_include_directories(ImGui PUBLIC external/imgui)
-target_link_libraries(ImGui PRIVATE glfw3)
+target_link_libraries(ImGui PRIVATE glfw)
 
 target_link_libraries(release PRIVATE ImGui)

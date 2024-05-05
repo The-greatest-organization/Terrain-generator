@@ -13,6 +13,12 @@ namespace TerrainGenerator {
 
         EventsCount
     };
+
+    enum class ButtonType {
+        A = 65, W = 87, S = 83, D = 68
+    };
+
+
     struct BaseEvent {
     public:
         virtual ~BaseEvent() = default;
@@ -43,6 +49,16 @@ namespace TerrainGenerator {
 
     struct EventWindowClose : public BaseEvent {
         static const EventType type = EventType::WindowClose;
+
+        virtual EventType getType() const override { return type; }
+    };
+
+    struct EventMouseButtonPressed : public BaseEvent {
+        static const EventType type = EventType::MouseButtonPressed;
+
+        ButtonType key;
+
+        EventMouseButtonPressed(int key) : key(static_cast<ButtonType>(key)) {}
 
         virtual EventType getType() const override { return type; }
     };

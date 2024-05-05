@@ -1,6 +1,7 @@
 #include "Application.h"
 #include "Window.h"
 #include "Event.h"
+#include <iostream>
 
 namespace TerrainGenerator {
     Application::Application() = default;
@@ -13,6 +14,18 @@ namespace TerrainGenerator {
         eventDispatcher_.addEventListener<EventWindowClose>(
                 [&](EventWindowClose &event) {
                     closeWindow_ = true;
+                });
+
+        eventDispatcher_.addEventListener<EventMouseButtonPressed>(
+                [&](EventMouseButtonPressed &event) {
+                    if (event.key == ButtonType::A)
+                        std::cout << "a\n";
+                    if (event.key == ButtonType::W)
+                        std::cout << "w\n";
+                    if (event.key == ButtonType::S)
+                        std::cout << "s\n";
+                    if (event.key == ButtonType::D)
+                        std::cout << "d\n";
                 });
 
         window_->setEventCallback(

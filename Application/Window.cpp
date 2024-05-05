@@ -7,37 +7,37 @@
 #include <imgui/backends/imgui_impl_opengl3.h>
 #include <imgui/backends/imgui_impl_glfw.h>
 
-#include <iostream>
 #include "../terrain_generator/stb_image.h"
-#include "../terrain_generator/generator.h"
+#include "../terrain_generator/generator.hpp"
 
 
 namespace TerrainGenerator {
     static std::minstd_rand generator;
     static bool GLFWInitialized = false;
-    static Int32 resolution = 1;
-    static Int32 size = 400;
-    static Int32 seed = generator();
-    static const char *biomes[]{"Plain", "Mountains", "Desert", "Sea"};
-    static const Int32 countBiomes = 4;
-    static Int32 biome = 0;
-    static Int32 maxHeight = 5000;
-    static Float32 intensityTerrain = 1.2;
-    static Float32 frequencyTerrain = 4;
-    static Float32 amplitudeTerrain = 1;
-    static Int32 stepsTerrain = 10;
-    static Float32 subIntensityHydraulic = 0.5;
-    static Float32 addIntensityHydraulic = 0.4;
-    static Int32 stepsHydraulic = 10;
-    static Int32 stepsRealHydraulic = 0;
-    static Float32 intensityRealHydraulic = 1;
-    static Float32 fluidityRealHydraulic = 0.8;
-    static Float32 flowabilityRealHydraulic = 2;
-    static Float32 evaporationRealHydraulic = 0.5;
-    static const char *seasons[]{"Summer", "Autumn", "Winter", "Spring"};
-    static const Int32 countSeasons = 4;
-    static Int32 season = 0;
-    static bool cuda = false;
+    Terrain terrain;
+//    static Int32 resolution = 1;
+//    static Int32 size = 400;
+//    static Int32 seed = generator();
+//    static const char *biomes[]{"Plain", "Mountains", "Desert", "Sea"};
+//    static const Int32 countBiomes = 4;
+//    static Int32 biome = 0;
+//    static Int32 maxHeight = 2000;
+//    static Float32 intensityTerrain = 0.9;
+//    static Float32 frequencyTerrain = 4;
+//    static Float32 amplitudeTerrain = 1;
+//    static Int32 stepsTerrain = 12;
+//    static Float32 subIntensityHydraulic = 0.5;
+//    static Float32 addIntensityHydraulic = 0.4;
+//    static Int32 stepsHydraulic = 10;
+//    static Int32 stepsRealHydraulic = 10;
+//    static Float32 intensityRealHydraulic = 0.6;
+//    static Float32 fluidityRealHydraulic = 0.5;
+//    static Float32 flowabilityRealHydraulic = 1;
+//    static Float32 evaporationRealHydraulic = 0.5;
+//    static const char *seasons[]{"Summer", "Autumn", "Winter", "Spring"};
+//    static const Int32 countSeasons = 4;
+//    static Int32 season = 0;
+//    static bool cuda = false;
     static bool run = false;
 
     static Int32 maxSize = 500;
@@ -95,6 +95,14 @@ namespace TerrainGenerator {
 
         glfwSetWindowUserPointer(window_, &data_);
 
+        glfwSetKeyCallback(window_, [](GLFWwindow *window, int key, int scancode, int action, int mods){
+            if (action != GLFW_PRESS) return;
+            WindowData &data =
+                    *static_cast<WindowData *>(glfwGetWindowUserPointer(window));
+            EventMouseButtonPressed event = EventMouseButtonPressed(key);
+            data.eventCallbackFn(event);
+        });
+
         glfwSetWindowCloseCallback(window_, [](GLFWwindow *window) {
             WindowData &data =
                     *static_cast<WindowData *>(glfwGetWindowUserPointer(window));
@@ -144,17 +152,11 @@ namespace TerrainGenerator {
 
 
     void loadPreview() {
-        Terrain tr = Terrain(
-                400, maxHeight, seed, 1, intensityTerrain, frequencyTerrain,
-                amplitudeTerrain, stepsTerrain, stepsHydraulic, subIntensityHydraulic,
-                addIntensityHydraulic, stepsRealHydraulic, intensityRealHydraulic,
-                fluidityRealHydraulic, flowabilityRealHydraulic,
-                evaporationRealHydraulic, cuda);
-        tr.generate();
+        terrain.generate()
 
         /// TODO: get the pixels from generator directly to avoid working with files
 
-        tr.export_png("preview.png");
+        terrain.export_png("preview.png");
         retLoadPreview = LoadTextureFromFile("preview.png", &previewTexture,
                                              &previewWidth, &previewHeight);
 
@@ -163,23 +165,25 @@ namespace TerrainGenerator {
     void showPreview(Float32 windowWidth, Float32 windowHeight) {
         ImGui::BeginChild("Preview", {windowWidth / 4, windowHeight * 1.5f / 4},
                           true);
-        float posY = ImGui::GetCursorPosY();
-        float posX = ImGui::GetCursorPosX();
         ImGui::SeparatorText("Preview:");
-        //ImGui::SetCursorPos({windowWidth / 4 * 3.5 / 4, posY});
         if (isChange) {
-            float posY = ImGui::GetCursorPosY() + windowHeight * 1.5f / 4 / 3;
-            ImGui::SetCursorPos({ImGui::GetCursorPosX() + windowWidth / 4 / 3, posY});
-            ImGui::SetCursorPosY(posY);
+            float posY = ImGui::GetCursorPosY() + windowHeight * 1.5f / 10;
+            float posX = ImGui::GetCursorPosX() + windowWidth / 12;
+            ImGui::SetCursorPos({posX, posY});
             ImGui::Text("Preview was modified");
+            ImGui::SetCursorPos({posX + 20, ImGui::GetCursorPosY() + 10});
             if (ImGui::Button("Update", {100, 50})) {
                 isChange = false;
                 loadPreview();
             }
         } else {
             if (!retLoadPreview) {
+                float posY = ImGui::GetCursorPosY() + windowHeight * 1.5f / 10;
+                float posX = ImGui::GetCursorPosX() + windowWidth / 12;
+                ImGui::SetCursorPos({posX, posY});
                 ImGui::Text("no image");
             } else {
+                ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 20);
                 ImGui::Image((void *) (intptr_t) previewTexture,
                              ImVec2(previewWidth, previewHeight));
             }
@@ -192,30 +196,38 @@ namespace TerrainGenerator {
                           true);
 
         ImGui::SeparatorText("Main settings:");
-        isChange = ImGui::InputInt("Seed", &seed) || isChange;
-        ImGui::SliderInt("Resolution", &resolution, 1, maxResolution);
+        float posY = ImGui::GetCursorPosY();
+        isChange = ImGui::InputInt("Seed", &terrain.params.seed) || isChange;
+        float posX = ImGui::GetCursorPosX();
+        ImGui::SetCursorPos({posX + windowWidth * 3 / 16, posY});
+        if  (ImGui::Button("Random", {20, 30})) {
+            seed = generator();
+            isChange = true;
+        }
+        ImGui::SetCursorPosX(posX);
+        ImGui::SliderInt("Resolution", &terrain.params.resolution, 1, maxResolution);
         ImGui::SliderInt("Size", &size, 1, maxSize);
         ImGui::SeparatorText("Terrain formation:");
-        isChange = ImGui::SliderFloat("Intensity", &intensityTerrain, 0, 2) || isChange;
-        isChange = ImGui::SliderFloat("Frequency", &frequencyTerrain, 0, 10) || isChange;
-        isChange = ImGui::SliderFloat("Amplitude", &amplitudeTerrain, 0, 10) || isChange;
-        isChange = ImGui::SliderInt("Max height", &maxHeight, 0, 5000) || isChange;
-        isChange = ImGui::SliderInt("Steps##1", &stepsTerrain, 0, 100) || isChange;
+        isChange = ImGui::SliderFloat("Intensity", &terrain.params.perlin_intensity, 0, 1) || isChange;
+        isChange = ImGui::SliderFloat("Frequency", &terrain.params.perlin_frequency, 0, 5) || isChange;
+        isChange = ImGui::SliderFloat("Amplitude", &terrain.params.perlin_amplitude, 0, 5) || isChange;
+        isChange = ImGui::SliderInt("Max height", &terrain.params.max_height, 0, 19000) || isChange;
+        isChange = ImGui::SliderInt("Steps##1", &terrain.params.perlin_iterations, 0, 20) || isChange;
 
         ImGui::SeparatorText("Smoothing hydraulic erosion:");
-        isChange = ImGui::SliderFloat("Sub intensity", &subIntensityHydraulic, 0, 1) || isChange;
-        isChange = ImGui::SliderFloat("Add intensity", &addIntensityHydraulic, 0, 1) || isChange;
-        isChange = ImGui::SliderInt("Steps##2", &stepsHydraulic, 0, 100) || isChange;
+        isChange = ImGui::SliderFloat("Sub intensity", &terrain.params.smoothing_hydraulic_erosion_sub_intensity, 0, 1) || isChange;
+        isChange = ImGui::SliderFloat("Add intensity", &terrain.params.smoothing_hydraulic_erosion_add_intensity, 0, subIntensityHydraulic) || isChange;
+        isChange = ImGui::SliderInt("Steps##2", &terrain.params.real_hydraulic_erosion_steps, 0, 100) || isChange;
 
         ImGui::SeparatorText("Real hydraulic erosion:");
-        isChange = ImGui::SliderFloat("Intensity##2", &intensityRealHydraulic, 0, 1) || isChange;
-        isChange = ImGui::SliderFloat("Fluidity of water", &fluidityRealHydraulic, 0, 1) || isChange;
-        isChange = ImGui::SliderFloat("Soil flowability", &flowabilityRealHydraulic, 0, 10) || isChange;
-        isChange = ImGui::SliderFloat("Evaporation of water", &evaporationRealHydraulic, 0, 1) || isChange;
-        isChange = ImGui::SliderInt("Steps##3", &stepsRealHydraulic, 0, 100) || isChange;
+        isChange = ImGui::SliderFloat("Intensity##2", &terrain.params.real_hydraulic_erosion_intensity, 0, 15) || isChange;
+        isChange = ImGui::SliderFloat("Fluidity of water", &terrain.params.real_hydraulic_erosion_fluidity_of_water, 0, 1) || isChange;
+        isChange = ImGui::SliderFloat("Soil flowability", &terrain.params.real_hydraulic_erosion_soil_flowability, 0, 2) || isChange;
+        isChange = ImGui::SliderFloat("Evaporation of water", &terrain.params.real_hydraulic_erosion_non_evaporation_of_water, 0, 1) || isChange;
+        isChange = ImGui::SliderInt("Steps##3", &terrain.params.real_hydraulic_erosion_steps, 0, 100) || isChange;
 
         ImGui::SeparatorText("Running:");
-        isChange = ImGui::Checkbox("Cuda", &cuda) || isChange;
+        isChange = ImGui::Checkbox("Cuda", &terrain.params.cuda) || isChange;
         if (ImGui::Button("Run", {100.f, 50.f})) {
             run = true;
         }
