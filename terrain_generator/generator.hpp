@@ -1,3 +1,5 @@
+#pragma once
+
 #ifndef generator_h
 #define generator_h
 
@@ -25,7 +27,7 @@ class SimpleRandom {
 public:
     std::mt19937 gen;
 
-    SimpleRandom(uint seed, type min, type max) {
+    SimpleRandom(int seed, type min, type max) {
         range = std::uniform_int_distribution<type>(min, max);
         range_interval = std::uniform_int_distribution<type>(0);
         gen = std::mt19937(seed);
@@ -40,7 +42,7 @@ public:
 
 class Noise {
     struct vec2 {
-        double x, y;
+        float x, y;
 
 //        vec2 operator+(vec2 other) const {
 //            return vec2{x + other.x, y + other.y};
@@ -64,45 +66,45 @@ class Noise {
 
         a ^= b << s | b >> (w - s);
         a *= 2048419325;
-        double rnd = a * (3.14159265 / ~(~0u >> 1));
+        float rnd = a * (3.14159265 / ~(~0u >> 1));
 
         vec2 v{std::sin(rnd), v.y = std::cos(rnd)};
 
         return v;
     }
 
-    static double distance_gradient_dot(int ix, int iy, double x, double y) {
+    static float distance_gradient_dot(int ix, int iy, float x, float y) {
         vec2 gradient = pseudo_random_gradient_vector(ix, iy);
 
         //distance
-        double dist_x = x - ix;
-        double dist_y = y - iy;
+        float dist_x = x - ix;
+        float dist_y = y - iy;
 
         return dist_x * gradient.x + dist_y * gradient.y;
 
     }
 
-    static double interpolate(double a, double b, double t) {
+    static float interpolate(float a, float b, float t) {
         t = t * t * (3.0f - 2.0f * t);//3rd degree smoothstep
         return a + t * (b - a);//TODO ?
     }
 
 
 public:
-    static double perlin_noise(double x, double y) {
+    static float perlin_noise(float x, float y) {
         int top_left_x = (int) x;
         int top_left_y = (int) y;
 
 
-        double top_left_value = distance_gradient_dot(top_left_x, top_left_y, x, y);
-        double top_right_value = distance_gradient_dot(top_left_x + 1, top_left_y, x, y);
+        float top_left_value = distance_gradient_dot(top_left_x, top_left_y, x, y);
+        float top_right_value = distance_gradient_dot(top_left_x + 1, top_left_y, x, y);
 
-        double low_left_value = distance_gradient_dot(top_left_x, top_left_y + 1, x, y);
-        double low_right_value = distance_gradient_dot(top_left_x + 1, top_left_y + 1, x, y);
+        float low_left_value = distance_gradient_dot(top_left_x, top_left_y + 1, x, y);
+        float low_right_value = distance_gradient_dot(top_left_x + 1, top_left_y + 1, x, y);
 
-        double top = interpolate(top_left_value, top_right_value, x - top_left_x);
-        double low = interpolate(low_left_value, low_right_value, x - top_left_x);
-        double res = interpolate(top, low, y - top_left_y);
+        float top = interpolate(top_left_value, top_right_value, x - top_left_x);
+        float low = interpolate(low_left_value, low_right_value, x - top_left_x);
+        float res = interpolate(top, low, y - top_left_y);
         return res;
     }
 
@@ -119,26 +121,26 @@ public:
 };
 
 struct TerrainParams {
-    uint seed;// [0:UINT_MAX]
-    int resolution;//limited by performance
-    int size;//limited by performance
+    int seed;// [0:UINT_MAX]
+    int resolution = 1;//limited by performance
+    int size = 400;//limited by performance
     int max_height = 2000;//11000 below sea level + 8000 above sea level = 19000 - earth maximum
 
 
     int perlin_iterations = 12;//[0:20]
-    double perlin_intensity = 0.9;//[0:1]
-    double perlin_frequency = 4;//[0:5]
-    double perlin_amplitude = 1;//[0:5]
+    float perlin_intensity = 0.9;//[0:1]
+    float perlin_frequency = 4;//[0:5]
+    float perlin_amplitude = 1;//[0:5]
 
     int smoothing_hydraulic_erosion_steps = 10;//[0:100]
-    double smoothing_hydraulic_erosion_sub_intensity = 0.5;//[0:1]
-    double smoothing_hydraulic_erosion_add_intensity = 0.4;//[0:smoothing_hydraulic_erosion_sub_intensity]
+    float smoothing_hydraulic_erosion_sub_intensity = 0.5;//[0:1]
+    float smoothing_hydraulic_erosion_add_intensity = 0.4;//[0:smoothing_hydraulic_erosion_sub_intensity]
 
     int real_hydraulic_erosion_steps = 10;//[0:100]
-    double real_hydraulic_erosion_intensity = 0.6;//precipitation per iteration, meters. [0:15] idk
-    double real_hydraulic_erosion_fluidity_of_water = 0.5; //IDK how to call it better, lol. 0-1
-    double real_hydraulic_erosion_soil_flowability = 1;// maybe [0:2], i will think about that one
-    double real_hydraulic_erosion_non_evaporation_of_water = 0.5; //this one is funny too, also [0:1]
+    float real_hydraulic_erosion_intensity = 0.6;//precipitation per iteration, meters. [0:15] idk
+    float real_hydraulic_erosion_fluidity_of_water = 0.5; //IDK how to call it better, lol. 0-1
+    float real_hydraulic_erosion_soil_flowability = 1;// maybe [0:2], i will think about that one
+    float real_hydraulic_erosion_non_evaporation_of_water = 0.5; //this one is funny too, also [0:1]
 
     bool cuda = false;
 
@@ -218,15 +220,15 @@ class Terrain {
 
     //TODO beautify
     template<typename type>
-    void noise_hmap(type **map, type max_height, uint iterations, double intensity, double in_freq, double in_amp,
+    void noise_hmap(type **map, type max_height, uint iterations, float intensity, float in_freq, float in_amp,
                     uint map_seed) const {
         for (uint i = 0; i < frozen_params.points_size; i++) {
             for (uint j = 0; j < frozen_params.points_size; j++) {
-                double x = i, y = j;
+                float x = i, y = j;
                 x /= frozen_params.resolution, y /= frozen_params.resolution;
-                double freq = in_freq;
-                double amp = in_amp;
-                double val = 0;
+                float freq = in_freq;
+                float amp = in_amp;
+                float val = 0;
                 for (int k = 0; k < iterations; k++) {//as variable
                     val += Noise::perlin_noise(x * freq / frozen_params.size + map_seed,
                                                y * freq / frozen_params.size + map_seed) * amp;
@@ -300,15 +302,15 @@ class Terrain {
                                  {0,  -1},
                                  {-1, -1}};
 
-        double m = frozen_params.real_hydraulic_erosion_fluidity_of_water;
-        double n = frozen_params.real_hydraulic_erosion_soil_flowability;
-        double k = pow(frozen_params.resolution, n) * pow(3.1415 / 2, n);
+        float m = frozen_params.real_hydraulic_erosion_fluidity_of_water;
+        float n = frozen_params.real_hydraulic_erosion_soil_flowability;
+        float k = pow(frozen_params.resolution, n) * pow(3.1415 / 2, n);
 
-        SimpleRandom<uint> rnd{frozen_params.seed, 0, 50000};
+        SimpleRandom<int> rnd{frozen_params.seed, 1, 50000};
         uint water_seed = rnd.next();
-        auto water = new_map<double>(frozen_params.points_size);
+        auto water = new_map<float>(frozen_params.points_size);
         for (uint step = 0; step < frozen_params.real_hydraulic_erosion_steps; step++) {
-            noise_hmap<double>(water, frozen_params.real_hydraulic_erosion_intensity, 15, 1, 1, 1, water_seed);
+            noise_hmap<float>(water, frozen_params.real_hydraulic_erosion_intensity, 15, 1, 1, 1, water_seed);
             for (uint i = 0; i < frozen_params.points_size; i++) {
                 for (uint j = 0; j < frozen_params.points_size; j++) {
                     std::shuffle(directions[0], directions[7], rnd.gen);//TODO i think it takes too long
@@ -321,8 +323,8 @@ class Terrain {
                             continue;
                         }//TODO Water should also flow away around the edges
                         uint diff = hmap[i][j] - hmap[x][y];
-                        double slope = std::atan((double) diff);
-                        double speed = std::pow(water[i][j], m) * std::pow(slope, n) / k;
+                        float slope = std::atan((float) diff);
+                        float speed = std::pow(water[i][j], m) * std::pow(slope, n) / k;
 
                         //TODO now water carries too much
                         hmap[x][y] += (uint) (diff * speed * 0.1);
@@ -330,7 +332,7 @@ class Terrain {
 
 
                         diff = hmap[i][j] - hmap[x][y];
-                        double all_water = water[x][y] + water[i][j];
+                        float all_water = water[x][y] + water[i][j];
                         if (all_water > diff) {
                             water[i][j] = (all_water - diff) / 2;
                             water[x][y] = diff + (all_water - diff) / 2;
@@ -450,7 +452,7 @@ public:
             throw std::range_error("Map size is too big");
         }
         auto out = new char[frozen_params.points_size * frozen_params.points_size];
-        double k = (double) frozen_params.max_height / CHAR_MAX;
+        float k = (float) frozen_params.max_height / CHAR_MAX;
         for (uint i = 0; i < frozen_params.points_size; i++) {
             for (uint j = 0; j < frozen_params.points_size; j++) {
                 out[i * frozen_params.points_size + j] = (char) (hmap[i][j] / k);
@@ -462,7 +464,7 @@ public:
     }
 
     void cout_map() {//TODO fix before use
-        double k = (double) frozen_params.max_height / 24;
+        float k = (float) frozen_params.max_height / 24;
         for (uint i = 0; i < frozen_params.points_size; i++) {
             for (uint j = 0; j < frozen_params.points_size; j++) {
                 std::cout << (j == 0 ? "\n" : "") << "\033[38;5;" << 231 + (hmap[i][j] / k) << "m" << "█";

@@ -5,13 +5,17 @@
 
 #include <string>
 #include <functional>
-#include "Utils.h"
+
+#include "../terrain_generator/generator.hpp"
+
 
 struct GLFWwindow;
 
 namespace TerrainGenerator {
+    void loadPreview();
     class Window {
     public:
+        Terrain terrain;
         using EventCallbackFn =
                 std::function<void(BaseEvent &)>;
 
@@ -36,6 +40,8 @@ namespace TerrainGenerator {
         void setEventCallback(const EventCallbackFn &callback) {
             data_.eventCallbackFn = callback;
         }
+
+//        void loadPreview();
 
     private:
         struct WindowData {
