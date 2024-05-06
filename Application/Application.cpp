@@ -2,12 +2,12 @@
 #include "Window.h"
 #include "Event.h"
 #include <iostream>
-
+#include <thread>
 
 namespace TerrainGenerator {
-    //class Terrain;
-    static bool load;
-    //static Terrain terrain;
+    class Terrain;
+    static bool load = false;
+    static Terrain* terrain;
     Application::Application() = default;
 
     Application::~Application() = default;
@@ -40,12 +40,15 @@ namespace TerrainGenerator {
 
 //        isChange = false;
 //        loadPreview();
+
         while (!closeWindow_) {
             window_->onUpdate();
             onUpdate();
             if (load) {
+                std::cout << load;
                 load = false;
-                //loadPreview();
+                std::thread th1(loadPreview);
+                th1.join();
             }
 
         }

@@ -1,6 +1,7 @@
 #include "Window.h"
 
 #include <random>
+#include <iostream>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <imgui/imgui.h>
@@ -15,7 +16,7 @@
 namespace TerrainGenerator {
     static std::minstd_rand generator;
     static bool GLFWInitialized = false;
-    Terrain terrain;
+    Terrain *terrain;
     static bool load = false;
     static bool run = false;
 
@@ -88,7 +89,8 @@ namespace TerrainGenerator {
             EventWindowClose event;
             data.eventCallbackFn(event);
         });
-        terrain.params.seed = generator();
+        terrain = new Terrain();
+        terrain->params.seed = generator();
         return 0;
     }
 
@@ -131,11 +133,11 @@ namespace TerrainGenerator {
 
 
     void loadPreview() {
-        terrain.generate();
+        terrain->generate();
 
         /// TODO: get the pixels from generator directly to avoid working with files
-
-        terrain.export_png("preview.png");
+        std::cout << "load\n";
+        //terrain->export_png("preview.png");
         retLoadPreview = LoadTextureFromFile("preview.png", &previewTexture,
                                              &previewWidth, &previewHeight);
 
@@ -154,6 +156,7 @@ namespace TerrainGenerator {
             if (ImGui::Button("Update", {100, 50})) {
                 isChange = false;
                 load = true;
+                std::cout << "rr\n";
             }
         } else {
             if (!retLoadPreview) {
@@ -176,37 +179,37 @@ namespace TerrainGenerator {
 
         ImGui::SeparatorText("Main settings:");
         float posY = ImGui::GetCursorPosY();
-        isChange = ImGui::InputInt("Seed", &terrain.params.seed) || isChange;
+        isChange = ImGui::InputInt("Seed", &terrain->params.seed) || isChange;
         float posX = ImGui::GetCursorPosX();
         ImGui::SetCursorPos({posX + windowWidth * 3 / 16, posY});
         if  (ImGui::Button("Random", {50, 30})) {
-            terrain.params.seed = generator();
+            terrain->params.seed = generator();
             isChange = true;
         }
         ImGui::SetCursorPosX(posX);
-        ImGui::SliderInt("Resolution", &terrain.params.resolution, 1, maxResolution);
-        ImGui::SliderInt("Size", &terrain.params.size, 1, maxSize);
+        ImGui::SliderInt("Resolution", &terrain->params.resolution, 1, maxResolution);
+        ImGui::SliderInt("Size", &terrain->params.size, 1, maxSize);
         ImGui::SeparatorText("Terrain formation:");
-        isChange = ImGui::SliderFloat("Intensity", &terrain.params.perlin_intensity, 0, 1) || isChange;
-        isChange = ImGui::SliderFloat("Frequency", &terrain.params.perlin_frequency, 0, 5) || isChange;
-        isChange = ImGui::SliderFloat("Amplitude", &terrain.params.perlin_amplitude, 0, 5) || isChange;
-        isChange = ImGui::SliderInt("Max height", &terrain.params.max_height, 0, 19000) || isChange;
-        isChange = ImGui::SliderInt("Steps##1", &terrain.params.perlin_iterations, 0, 20) || isChange;
+        isChange = ImGui::SliderFloat("Intensity", &terrain->params.perlin_intensity, 0, 1) || isChange;
+        isChange = ImGui::SliderFloat("Frequency", &terrain->params.perlin_frequency, 0, 5) || isChange;
+        isChange = ImGui::SliderFloat("Amplitude", &terrain->params.perlin_amplitude, 0, 5) || isChange;
+        isChange = ImGui::SliderInt("Max height", &terrain->params.max_height, 0, 19000) || isChange;
+        isChange = ImGui::SliderInt("Steps##1", &terrain->params.perlin_iterations, 0, 20) || isChange;
 
         ImGui::SeparatorText("Smoothing hydraulic erosion:");
-        isChange = ImGui::SliderFloat("Sub intensity", &terrain.params.smoothing_hydraulic_erosion_sub_intensity, 0, 1) || isChange;
-        isChange = ImGui::SliderFloat("Add intensity", &terrain.params.smoothing_hydraulic_erosion_add_intensity, 0, terrain.params.smoothing_hydraulic_erosion_sub_intensity) || isChange;
-        isChange = ImGui::SliderInt("Steps##2", &terrain.params.smoothing_hydraulic_erosion_steps, 0, 100) || isChange;
+        isChange = ImGui::SliderFloat("Sub intensity", &terrain->params.smoothing_hydraulic_erosion_sub_intensity, 0, 1) || isChange;
+        isChange = ImGui::SliderFloat("Add intensity", &terrain->params.smoothing_hydraulic_erosion_add_intensity, 0, terrain->params.smoothing_hydraulic_erosion_sub_intensity) || isChange;
+        isChange = ImGui::SliderInt("Steps##2", &terrain->params.smoothing_hydraulic_erosion_steps, 0, 100) || isChange;
 
         ImGui::SeparatorText("Real hydraulic erosion:");
-        isChange = ImGui::SliderFloat("Intensity##2", &terrain.params.real_hydraulic_erosion_intensity, 0, 15) || isChange;
-        isChange = ImGui::SliderFloat("Fluidity of water", &terrain.params.real_hydraulic_erosion_fluidity_of_water, 0, 1) || isChange;
-        isChange = ImGui::SliderFloat("Soil flowability", &terrain.params.real_hydraulic_erosion_soil_flowability, 0, 2) || isChange;
-        isChange = ImGui::SliderFloat("Evaporation of water", &terrain.params.real_hydraulic_erosion_non_evaporation_of_water, 0, 1) || isChange;
-        isChange = ImGui::SliderInt("Steps##3", &terrain.params.real_hydraulic_erosion_steps, 0, 100) || isChange;
+        isChange = ImGui::SliderFloat("Intensity##2", &terrain->params.real_hydraulic_erosion_intensity, 0, 15) || isChange;
+        isChange = ImGui::SliderFloat("Fluidity of water", &terrain->params.real_hydraulic_erosion_fluidity_of_water, 0, 1) || isChange;
+        isChange = ImGui::SliderFloat("Soil flowability", &terrain->params.real_hydraulic_erosion_soil_flowability, 0, 2) || isChange;
+        isChange = ImGui::SliderFloat("Evaporation of water", &terrain->params.real_hydraulic_erosion_non_evaporation_of_water, 0, 1) || isChange;
+        isChange = ImGui::SliderInt("Steps##3", &terrain->params.real_hydraulic_erosion_steps, 0, 100) || isChange;
 
         ImGui::SeparatorText("Running:");
-        isChange = ImGui::Checkbox("Cuda", &terrain.params.cuda) || isChange;
+        isChange = ImGui::Checkbox("Cuda", &terrain->params.cuda) || isChange;
         if (ImGui::Button("Run", {100.f, 50.f})) {
             run = true;
         }
