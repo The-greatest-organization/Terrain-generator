@@ -5,16 +5,16 @@
 
 
 namespace TerrainGenerator {
-
+    //class Terrain;
     static bool load;
-    static Terrain terrain;
+    //static Terrain terrain;
     Application::Application() = default;
 
     Application::~Application() = default;
 
     int Application::start(Uint32 windowWidth, Uint32 windowHeight, const char *title) {
         window_ = std::make_unique<Window>(title, windowWidth, windowHeight);
-        terrain.generate();
+        //terrain.generate();
         eventDispatcher_.addEventListener<EventWindowClose>(
                 [&](EventWindowClose &event) {
                     closeWindow_ = true;

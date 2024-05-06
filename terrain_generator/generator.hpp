@@ -1,23 +1,13 @@
 #pragma once
 
-#ifndef generator_h
-#define generator_h
-
 #include <fstream>
 #include "algorithm"
 #include "random"
 #include "iostream"
 #include "cmath"
+#include <cstring>
+#include <climits>
 
-#define STB_IMAGE_IMPLEMENTATION
-
-#include "stb_image.h"
-
-#define STB_IMAGE_WRITE_IMPLEMENTATION
-
-#include "stb_image_write.h"
-
-#endif
 
 template<typename type>
 class SimpleRandom {
@@ -44,12 +34,6 @@ class Noise {
     struct vec2 {
         float x, y;
 
-//        vec2 operator+(vec2 other) const {
-//            return vec2{x + other.x, y + other.y};
-//        }
-//        vec2 operator*(double other) const{
-//            return vec2{x*other, y*other};
-//        }
     };
 
     static vec2 pseudo_random_gradient_vector(int x, int y) {
@@ -107,17 +91,6 @@ public:
         float res = interpolate(top, low, y - top_left_y);
         return res;
     }
-
-//    static double domain_distortion(double x, double y) {
-//        double x1 = fbm(x, y);
-//        double y1 = fbm(x + 5.2, y + 1.3);
-//
-//        double x2 = fbm(x + 4 * x1 + 1.7, x + 4 * y1 + 9.2);
-//        double y2 = (x + 4 * x1 + 8.3, y + 4 * y1 + 2.8);
-//
-//        return fbm(x, y);
-//    }
-
 };
 
 struct TerrainParams {
@@ -146,18 +119,6 @@ struct TerrainParams {
 
     bool operator==(TerrainParams &other) {
         return (memcmp(&seed, &other.seed, sizeof(TerrainParams)) == 0);
-//        return (seed == other.seed && resolution == other.resolution && size == other.size &&
-//                max_height == other.max_height && perlin_intensity == other.perlin_intensity &&
-//                perlin_frequency == other.perlin_frequency && perlin_amplitude == other.perlin_amplitude &&
-//                smoothing_hydraulic_erosion_steps == other.smoothing_hydraulic_erosion_steps &&
-//                smoothing_hydraulic_erosion_add_intensity == other.smoothing_hydraulic_erosion_add_intensity &&
-//                smoothing_hydraulic_erosion_sub_intensity == other.smoothing_hydraulic_erosion_sub_intensity &&
-//                real_hydraulic_erosion_steps == other.real_hydraulic_erosion_steps &&
-//                real_hydraulic_erosion_intensity == other.real_hydraulic_erosion_intensity &&
-//                real_hydraulic_erosion_non_evaporation_of_water ==
-//                other.real_hydraulic_erosion_non_evaporation_of_water &&
-//                real_hydraulic_erosion_fluidity_of_water == other.real_hydraulic_erosion_fluidity_of_water &&
-//                real_hydraulic_erosion_soil_flowability == other.real_hydraulic_erosion_soil_flowability);
     }
 
 
@@ -385,23 +346,7 @@ public:
         coloring();
     }
 
-    void load_png(const std::string &filename) {
-        hmap = new_map<uint>(frozen_params.points_size);
-
-        int width;
-        int height;
-        int comp;
-        unsigned char *image = stbi_load(filename.c_str(), &width, &height, &comp, 1);
-        if (height != width or width != frozen_params.points_size) {
-            throw std::runtime_error("Wrong image size");
-        }
-
-        for (uint i = 0; i < width; i++) {
-            for (uint j = 0; j < width; j++) {
-                hmap[i][j] = image[i * frozen_params.points_size + j] / CHAR_MAX * frozen_params.max_height;
-            }
-        }
-    }
+    void load_png(const std::string &filename);
 
     char export_file(const std::string &path,
                      bool force = false) {//status codes 0-OK, 1-BAD PATH, 2-NOT GENERATED, 3- NOT ACTUAL PARAMS, use force==true
@@ -447,21 +392,7 @@ public:
         return 0;
     }
 
-    void export_png(const std::string &filename = "result.png") {
-        if (frozen_params.points_size > INT_MAX) {
-            throw std::range_error("Map size is too big");
-        }
-        auto out = new char[frozen_params.points_size * frozen_params.points_size];
-        float k = (float) frozen_params.max_height / CHAR_MAX;
-        for (uint i = 0; i < frozen_params.points_size; i++) {
-            for (uint j = 0; j < frozen_params.points_size; j++) {
-                out[i * frozen_params.points_size + j] = (char) (hmap[i][j] / k);
-            }
-        }
-
-        stbi_write_png(filename.c_str(), (int) frozen_params.points_size, (int) frozen_params.points_size,
-                       1, out, (int) frozen_params.points_size * 1);
-    }
+    void export_png(const std::string &filename = "result.png");
 
     void cout_map() {//TODO fix before use
         float k = (float) frozen_params.max_height / 24;

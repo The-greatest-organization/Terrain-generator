@@ -1,0 +1,42 @@
+#include "generator.hpp"
+
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
+
+#define STB_IMAGE_WRITE_IMPLEMENTATION
+#include "stb_image_write.h"
+
+void Terrain::load_png(const std::string &filename) {
+    hmap = new_map<uint>(frozen_params.points_size);
+
+    int width;
+    int height;
+    int comp;
+    unsigned char *image = stbi_load(filename.c_str(), &width, &height, &comp, 1);
+    if (height != width or width != frozen_params.points_size) {
+        throw std::runtime_error("Wrong image size");
+    }
+
+    for (uint i = 0; i < width; i++) {
+        for (uint j = 0; j < width; j++) {
+            hmap[i][j] = image[i * frozen_params.points_size + j] / CHAR_MAX * frozen_params.max_height;
+        }
+    }
+}
+
+
+void Terrain::export_png(const std::string &filename = "result.png") {
+    if (frozen_params.points_size > INT_MAX) {
+        throw std::range_error("Map size is too big");
+    }
+    auto out = new char[frozen_params.points_size * frozen_params.points_size];
+    float k = (float) frozen_params.max_height / CHAR_MAX;
+    for (uint i = 0; i < frozen_params.points_size; i++) {
+        for (uint j = 0; j < frozen_params.points_size; j++) {
+            out[i * frozen_params.points_size + j] = (char) (hmap[i][j] / k);
+        }
+    }
+
+    stbi_write_png(filename.c_str(), (int) frozen_params.points_size, (int) frozen_params.points_size,
+                   1, out, (int) frozen_params.points_size * 1);
+}

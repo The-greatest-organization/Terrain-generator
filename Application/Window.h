@@ -6,7 +6,7 @@
 #include <string>
 #include <functional>
 
-#include "../terrain_generator/generator.hpp"
+//#include "../terrain_generator/generator.hpp"
 
 
 struct GLFWwindow;
@@ -15,7 +15,7 @@ namespace TerrainGenerator {
     void loadPreview();
     class Window {
     public:
-        Terrain terrain;
+        //Terrain terrain;
         using EventCallbackFn =
                 std::function<void(BaseEvent &)>;
 

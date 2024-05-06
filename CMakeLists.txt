@@ -9,7 +9,8 @@ set(CMAKE_C_STANDARD 11)
 
 add_executable(release Application/Main.cpp
         Application/Application.cpp
-        Application/Window.cpp)
+        Application/Window.cpp
+		terrain_generator/generator.сpp)
 
 #if (CMAKE_SYSTEM_NAME EQUAL "Windows")
 #    target_link_libraries(release glfw3 opengl32 gdi32)

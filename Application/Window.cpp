@@ -7,14 +7,15 @@
 #include <imgui/backends/imgui_impl_opengl3.h>
 #include <imgui/backends/imgui_impl_glfw.h>
 
-//#include "../terrain_generator/stb_image.h"
+#define STB_IMAGE_IMPLEMENTATION
+#include "../terrain_generator/stb_image.h"
 
-
+#include "../terrain_generator/generator.hpp"
 
 namespace TerrainGenerator {
     static std::minstd_rand generator;
     static bool GLFWInitialized = false;
-    static Terrain terrain;
+    Terrain terrain;
     static bool load = false;
     static bool run = false;
 
