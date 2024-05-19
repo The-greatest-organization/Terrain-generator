@@ -91,6 +91,21 @@ namespace tiny3d {
     using Rotation3D = ObjectComponentT<glm::vec4>;
     using Scale3D = ObjectComponentT<glm::vec4>;
 
+    struct __transform2d {
+        glm::vec2 translation;
+        glm::vec2 rotation;
+        glm::vec2 scale;
+    };
+
+    struct __transform3d {
+        glm::vec4 translation;
+        glm::vec4 rotation;
+        glm::vec4 scale;
+    };
+
+    using Transform2D = ObjectComponentT<__transform2d>;
+    using Transform3D = ObjectComponentT<__transform3d>;
+
     /// @todo implement graphics components
 
     // Graphics components will be looking someting like this
@@ -105,13 +120,25 @@ namespace tiny3d {
 
     class GameObject {
         public:
+        enum class Types : uint32 {
+            Object2D,
+            Light2D,
+
+            Object3D,
+            Light3D,
+
+            ObjectUI,
+        };
+
+        static std::string GetTypeString(Types type);
+
         GameObject() = delete;
 
         GameObject(const GameObject& object);
         GameObject(GameObject&& object) = default;
 
-        GameObject(const std::string& name, const std::string& type);
-        GameObject(const std::string& name, const std::string& type, std::initializer_list<ObjectComponent*> components);
+        GameObject(Types type, const std::string& name);
+        GameObject(Types type, const std::string& name, std::initializer_list<ObjectComponent*> components);
 
         ~GameObject();
 
@@ -143,13 +170,13 @@ namespace tiny3d {
             return name_;   
         }
 
-        inline const std::string& Type() const noexcept {
+        inline Types Type() const noexcept {
             return type_;
         }
 
         protected:
         std::unordered_map<std::string, ObjectComponent*> components_{10};
         std::string name_;
-        std::string type_;
+        Types type_;
     };
 }

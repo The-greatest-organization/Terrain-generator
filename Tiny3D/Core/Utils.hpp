@@ -11,10 +11,15 @@
 
 #include <type_traits>
 
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
+
 #ifdef RELEASE
 #undef assert
 #define assert(x) 
 #endif
+
+#define interface struct
 
 /// @todo create STL-like library with my own data structures (It will not be done)
 /// @todo сделать заебись

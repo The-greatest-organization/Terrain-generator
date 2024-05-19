@@ -19,9 +19,9 @@ namespace tiny3d::errors {
 namespace tiny3d {
     ObjectComponent::ObjectComponent(const std::string& name) : name_(name) {}
 
-    GameObject::GameObject(const std::string& name, const std::string& type) : name_(name), type_(type) {}
+    GameObject::GameObject(Types type, const std::string& name) : name_(name), type_(type) {}
 
-    GameObject::GameObject(const std::string& name, const std::string& type, std::initializer_list<ObjectComponent*> components) {
+    GameObject::GameObject(Types type, const std::string& name, std::initializer_list<ObjectComponent*> components) {
         name_ = name;
         type_ = type;
 
